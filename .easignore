@@ -1,0 +1,15 @@
+# Ignore cache and logs
+
+AppData/
+_.log
+_.odlsent
+
+# Ignore Chrome/OneDrive junk
+
+**/Cache/
+**/Code Cache/
+\*\*/logs/
+
+# Node_modules (should already be excluded)
+
+node_modules
