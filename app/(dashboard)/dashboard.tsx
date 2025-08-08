@@ -2,13 +2,13 @@ import WhyComponent from "@/app/sections/WhySection";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { useWindowDimensions, View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { TabView } from "react-native-tab-view";
 
 export default function Dashboard() {
   const layout = useWindowDimensions();
-  const [index, setIndex] = useState<number>(0);
+  const [index, setIndex] = useState(0);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const router = useRouter();
 
@@ -29,11 +29,14 @@ export default function Dashboard() {
 
   if (isAuthLoading) {
     return (
-      <View className="p-5 flex items-center justify-center">
-        <ActivityIndicator animating={true} />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
       </View>
     );
   }
+
+  // Prevent index out of bounds
+  if (index >= routes.length) setIndex(0);
 
   const renderScene = ({ route }: { route: { key: string } }) => {
     switch (route.key) {
@@ -44,7 +47,13 @@ export default function Dashboard() {
       case "third":
         return <WhyComponent />;
       default:
-        return null;
+        return (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text>Unknown tab</Text>
+          </View>
+        );
     }
   };
 
@@ -54,7 +63,7 @@ export default function Dashboard() {
       renderScene={renderScene}
       lazy
       onIndexChange={setIndex}
-      initialLayout={{ width: layout.width || 360 }}
+      initialLayout={{ width: layout.width > 0 ? layout.width : 360 }}
     />
   );
 }
