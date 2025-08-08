@@ -2,14 +2,16 @@
 import AppBarComponent from "@/components/AppBar";
 import DrawerWrapper from "@/components/DrawerWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Colors } from "@/constants/Colors";
 import { AuthProvider } from "@/context/AuthContext";
 import { DrawerProvider } from "@/context/DrawerContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MD3LightTheme, PaperProvider } from "react-native-paper";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -26,6 +28,8 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -33,15 +37,18 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
+  const paperTheme =
+    colorScheme === "dark"
+      ? { ...MD3DarkTheme, colors: Colors.dark }
+      : { ...MD3LightTheme, colors: Colors.light };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <PaperProvider theme={MD3LightTheme}>
+            <StatusBar style="light" />
+            <PaperProvider theme={paperTheme}>
               <ErrorBoundary>
-                <StatusBar style="dark" />
                 <DrawerProvider>
                   <DrawerWrapper>
                     <AppBarComponent />

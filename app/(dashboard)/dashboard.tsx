@@ -1,26 +1,42 @@
 import WhyComponent from "@/app/sections/WhySection";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
-import { Text, useWindowDimensions, View } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
-import { TabView } from "react-native-tab-view";
-
+import { useEffect, useState } from "react";
+import { View } from "react-native";
+import {
+  ActivityIndicator,
+  BottomNavigation,
+  Icon,
+  Provider,
+} from "react-native-paper";
+type MyRoute = {
+  key: string;
+  title: string;
+  icon: string;
+};
 export default function Dashboard() {
-  const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const router = useRouter();
 
-  const routes = useMemo(
-    () => [
-      { key: "first", title: "My Courses" },
-      { key: "second", title: "Library" },
-      { key: "third", title: "Leaderboard" },
-    ],
-    []
-  );
+  const routes: MyRoute[] = [
+    { key: "mycourses", title: "My Courses", icon: "view-agenda" },
+    { key: "library", title: "Library", icon: "library" },
+    { key: "leaderboard", title: "Leaderboard", icon: "seal-variant" },
+  ];
 
+  const renderScene = ({ route }: { route: MyRoute }) => {
+    switch (route.key) {
+      case "mycourses":
+        return <WhyComponent />;
+      case "library":
+        return <WhyComponent />;
+      case "leaderboard":
+        return <WhyComponent />;
+      default:
+        return null;
+    }
+  };
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) {
       router.replace("/(auth)/login");
@@ -35,35 +51,25 @@ export default function Dashboard() {
     );
   }
 
-  // Prevent index out of bounds
-  if (index >= routes.length) setIndex(0);
-
-  const renderScene = ({ route }: { route: { key: string } }) => {
-    switch (route.key) {
-      case "first":
-        return <WhyComponent />;
-      case "second":
-        return <WhyComponent />;
-      case "third":
-        return <WhyComponent />;
-      default:
-        return (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Text>Unknown tab</Text>
-          </View>
-        );
-    }
-  };
-
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      lazy
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width > 0 ? layout.width : 360 }}
-    />
+    <Provider>
+      <View style={{ flex: 1 }}>
+        {renderScene({ route: routes[index] })}
+        <BottomNavigation.Bar
+          style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
+          navigationState={{ index, routes }}
+          onTabPress={({ route }: { route: MyRoute }) => {
+            const newIndex = routes.findIndex((r) => r.key === route.key);
+            if (newIndex !== -1) {
+              setIndex(newIndex);
+            }
+          }}
+          renderIcon={({ route, color }: { route: MyRoute; color: string }) => (
+            <Icon source={route.icon} size={24} color={color} />
+          )}
+          getLabelText={({ route }: { route: MyRoute }) => route.title}
+        />
+      </View>
+    </Provider>
   );
 }

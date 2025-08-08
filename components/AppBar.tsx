@@ -44,7 +44,6 @@ const AppBarComponent = () => {
               </View>
             </View>
           }
-          subtitle={"Subtitle"}
         />
         <View style={styles.rightIcons}>
           {isAuthenticated ? (
