@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Neuropoint.MobileApp",
-    "slug": "Neuropoint.MobileApp",
+    "name": "NeuropointMobileApp",
+    "slug": "NeuropointMobileApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.royjhon5.NeuropointMobileApp"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "de6fa2cf-3a9c-49c0-865c-356b20972aee"
+      }
     }
   }
 }

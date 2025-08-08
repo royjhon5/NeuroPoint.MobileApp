@@ -1,8 +1,9 @@
 import WhyComponent from "@/app/sections/WhySection";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
-import { useWindowDimensions } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { useWindowDimensions, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { SceneMap, TabView } from "react-native-tab-view";
 
 const renderScene = SceneMap({
@@ -14,7 +15,7 @@ const renderScene = SceneMap({
 export default function Dashboard() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthLoading } = useAuth();
   const router = useRouter();
 
   const routes = useMemo(
@@ -26,8 +27,18 @@ export default function Dashboard() {
     []
   );
 
-  if (!isAuthenticated) {
-    router.replace("/(auth)/login");
+  useEffect(() => {
+    if (!isAuthLoading && !isAuthenticated) {
+      router.replace("/(auth)/login");
+    }
+  }, [isAuthLoading, isAuthenticated, router]);
+
+  if (isAuthLoading) {
+    return (
+      <View className="p-5 flex items-center justify-center">
+        <ActivityIndicator animating={true} />
+      </View>
+    );
   }
 
   return (
