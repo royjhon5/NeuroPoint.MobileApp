@@ -32,15 +32,21 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
   const [image, setImage] = useState<any>(null);
   const { upgradePackage, handlePaymentReceiptChange } = useUpgradePackage();
   const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("Permission to access media library is required!");
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
+      allowsEditing: true,
       quality: 1,
     });
 
     if (!result.canceled) {
       const asset = result.assets[0];
-      console.log(asset);
-      const imageData = {
+      const imageData: any = {
         uri: asset.uri,
         type: asset.type || "image/jpeg",
         name: asset.fileName || `receipt_${Date.now()}.jpg`,

@@ -4,9 +4,6 @@ import axios, { AxiosResponse, isAxiosError } from "axios";
 const httpHelper = axios.create({
   baseURL: "https://prod01-neuropoint-appsvc.azurewebsites.net/",
   timeout: 60000,
-  headers: {
-    Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
-  },
 });
 
 httpHelper.interceptors.request.use(

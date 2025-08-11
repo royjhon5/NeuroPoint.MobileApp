@@ -114,15 +114,16 @@ export const resetStudentAccountPassword = async (params: {
   );
   return response;
 };
-
+type RNFile = { uri: string; type: string; name: string };
 export const upgradeCurrentPackage = async (params: {
   studentPackageId: number;
   packageTypeId: number;
-  paymentReceipt: { uri: string; type: string; name: string };
+  paymentReceipt: RNFile;
 }) => {
   const formData = new FormData();
-  formData.append("studentPackageId", String(params.studentPackageId));
-  formData.append("packageTypeId", String(params.packageTypeId));
+
+  formData.append("studentPackageId", `${params.studentPackageId}`);
+  formData.append("packageTypeId", `${params.packageTypeId}`);
   formData.append("paymentReceipt", {
     uri: params.paymentReceipt.uri,
     type: params.paymentReceipt.type,
@@ -138,7 +139,6 @@ export const upgradeCurrentPackage = async (params: {
       },
     }
   );
-
   return response;
 };
 

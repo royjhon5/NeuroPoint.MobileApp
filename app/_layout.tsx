@@ -52,6 +52,14 @@ export default function RootLayout() {
       return {
         display: "none",
       };
+    } else if (pathname === "/login") {
+      return {
+        display: "none",
+      };
+    } else if (pathname === "/register") {
+      return {
+        display: "none",
+      };
     } else if (pathname.startsWith("/account")) {
       return {
         position: "absolute",

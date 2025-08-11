@@ -86,7 +86,7 @@ export default function Login() {
               Don’t have an account?{" "}
               <Text
                 style={{ color: theme.colors.primary }}
-                onPress={() => router.push("/")}
+                onPress={() => router.push("/(auth)/register")}
               >
                 Sign up
               </Text>

@@ -22,10 +22,6 @@ export interface SignUpUserDetails {
   packageType: number;
 }
 
-const isPartner =
-  location.pathname.includes("partner") &&
-  location.pathname.includes("sign-up");
-
 const useSignUp = () => {
   const router = useRouter();
   const { onSubmit: signInUser } = useSignIn();
@@ -56,7 +52,7 @@ const useSignUp = () => {
           type: "error",
           text2: "Enrollement Success!",
         });
-        router.push("/login/login");
+        router.push("/(auth)/login");
 
         if (paymentReceipt) {
           await uploadPackagePaymentReceipt(userId);
@@ -102,13 +98,6 @@ const useSignUp = () => {
     const { firstName, lastName, email, password, mobileNumber, address } =
       data;
 
-    if (!isPartner && !selectedBranchId) {
-      Toast.show({
-        type: "error",
-        text2: "Please select a branch.",
-      });
-      return;
-    }
     const studentRoleId = (userRoles as { id: number; name: string }[]).find(
       (role) => role.name === "Student"
     )?.id;

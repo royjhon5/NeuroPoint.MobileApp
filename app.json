@@ -12,9 +12,7 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends.",
-        "NSCameraUsageDescription": "The app uses the camera to let you take photos and videos.",
-        "NSMicrophoneUsageDescription": "This app uses the microphone to share your audio.",
-        "NSBluetoothPeripheralUsageDescription": "Required for Bluetooth audio devices"
+        "NSCameraUsageDescription": "The app uses the camera to let you take photos and videos."
       }
     },
     "android": {
@@ -25,8 +23,7 @@
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "RECORD_AUDIO"
+        "WRITE_EXTERNAL_STORAGE"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.royjhon5.NeuropointMobileApp"
