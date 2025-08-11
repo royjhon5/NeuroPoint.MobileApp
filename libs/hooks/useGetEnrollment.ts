@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { GetEnrollment } from "../api/services/enrollment.api";
 
 const useGetEnrollment = (id: string) => {
-  const { refetch, data, isPending } = useQuery({
+  const { refetch, data, isPending, isLoading } = useQuery({
     queryKey: ["getenrollment", id],
     queryFn: async () => {
       const response = await GetEnrollment(id);
@@ -13,6 +13,7 @@ const useGetEnrollment = (id: string) => {
 
   return {
     isPending,
+    isLoading,
     refetchData: refetch,
     enrollmentdata: data?.response ? data.response : [],
   };

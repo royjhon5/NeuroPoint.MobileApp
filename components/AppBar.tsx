@@ -28,7 +28,11 @@ const AppBarComponent = () => {
 
   return (
     <>
-      <Appbar.Header>
+      <Appbar.Header
+        style={{
+          backgroundColor: "#e8e6eaff",
+        }}
+      >
         <Appbar.Content
           title={
             <View className="flex flex-row gap-1 items-center">
@@ -59,7 +63,9 @@ const AppBarComponent = () => {
                 }
               >
                 <Menu.Item
-                  onPress={() => (router.push("/dashboard"), closeMenu())}
+                  onPress={() => (
+                    router.push("/(dashboard)/account"), closeMenu()
+                  )}
                   title="Account"
                 />
                 <Menu.Item onPress={handleAuthAction} title="Logout" />

@@ -7,11 +7,17 @@ import { AuthProvider } from "@/context/AuthContext";
 import { DrawerProvider } from "@/context/DrawerContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { Slot, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "react-native";
+import { useMemo } from "react";
+import { useColorScheme, ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import {
+  FAB,
+  MD3DarkTheme,
+  MD3LightTheme,
+  PaperProvider,
+} from "react-native-paper";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -29,10 +35,38 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
+  const pathname = usePathname();
+  const router = useRouter();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+  const fabStyle = useMemo<ViewStyle>(() => {
+    if (pathname === "/dashboard") {
+      return {
+        position: "absolute",
+        bottom: 105,
+        right: 16,
+        borderRadius: 50,
+      };
+    } else if (pathname === "/neuro-AI") {
+      return {
+        display: "none",
+      };
+    } else if (pathname.startsWith("/account")) {
+      return {
+        position: "absolute",
+        bottom: 105,
+        right: 16,
+        borderRadius: 50,
+      };
+    }
+    return {
+      position: "absolute",
+      bottom: 16,
+      right: 16,
+      borderRadius: 50,
+    };
+  }, [pathname]);
 
   if (!loaded) {
     return null;
@@ -41,18 +75,27 @@ export default function RootLayout() {
     colorScheme === "dark"
       ? { ...MD3DarkTheme, colors: Colors.dark }
       : { ...MD3LightTheme, colors: Colors.light };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <StatusBar style="light" />
+            <StatusBar />
+
             <PaperProvider theme={paperTheme}>
               <ErrorBoundary>
                 <DrawerProvider>
                   <DrawerWrapper>
                     <AppBarComponent />
                     <Slot />
+                    <FAB
+                      icon="message"
+                      style={fabStyle}
+                      onPress={() => {
+                        router.push("/neuro-AI");
+                      }}
+                    />
                     <Toast />
                   </DrawerWrapper>
                 </DrawerProvider>

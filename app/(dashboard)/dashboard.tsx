@@ -1,4 +1,6 @@
-import WhyComponent from "@/app/sections/WhySection";
+import LeaderboardPage from "@/app/(dashboard)/leaderboard/LeaderboardPage";
+import LibraryComponent from "@/app/(dashboard)/library";
+import MyCourse from "@/app/(dashboard)/my-couses/myCourse";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -28,11 +30,11 @@ export default function Dashboard() {
   const renderScene = ({ route }: { route: MyRoute }) => {
     switch (route.key) {
       case "mycourses":
-        return <WhyComponent />;
+        return <MyCourse />;
       case "library":
-        return <WhyComponent />;
+        return <LibraryComponent />;
       case "leaderboard":
-        return <WhyComponent />;
+        return <LeaderboardPage />;
       default:
         return null;
     }
@@ -56,7 +58,13 @@ export default function Dashboard() {
       <View style={{ flex: 1 }}>
         {renderScene({ route: routes[index] })}
         <BottomNavigation.Bar
-          style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 70,
+          }}
           navigationState={{ index, routes }}
           onTabPress={({ route }: { route: MyRoute }) => {
             const newIndex = routes.findIndex((r) => r.key === route.key);

@@ -3,6 +3,7 @@ import {
   CurrentUserDto,
   GetUserDto,
   LoginResponseDto,
+  UserDto,
   UserSignInDto,
   UserSignUpDto,
   UserUpdateDto,
@@ -61,6 +62,21 @@ export const getUserRoles = async () => {
   return response;
 };
 
+export const getAllUsersBro = async (params: {
+  studentName?: string;
+  pageNumber: number;
+  branchId: number | null;
+}) => {
+  const { studentName, pageNumber, branchId } = params;
+  // todo create endpoint for reterieving all users except students
+  let query = `all?studentName=${studentName}&pageNumber=${pageNumber}&branchId=${branchId}&PageSize=200`;
+
+  const { data: response } = await httpHelper.get<BaseResponseType<UserDto[]>>(
+    `${baseAPI}/${query}`
+  );
+  return response;
+};
+
 export const deleteUser = async (id: string) => {
   try {
     const { data: response } = await httpHelper.delete<
@@ -102,13 +118,16 @@ export const resetStudentAccountPassword = async (params: {
 export const upgradeCurrentPackage = async (params: {
   studentPackageId: number;
   packageTypeId: number;
-  paymentReceipt: File;
+  paymentReceipt: { uri: string; type: string; name: string };
 }) => {
   const formData = new FormData();
-
-  formData.append("studentPackageId", `${params.studentPackageId}`);
-  formData.append("packageTypeId", `${params.packageTypeId}`);
-  formData.append("paymentReceipt", params.paymentReceipt);
+  formData.append("studentPackageId", String(params.studentPackageId));
+  formData.append("packageTypeId", String(params.packageTypeId));
+  formData.append("paymentReceipt", {
+    uri: params.paymentReceipt.uri,
+    type: params.paymentReceipt.type,
+    name: params.paymentReceipt.name,
+  } as any);
 
   const { data: response } = await httpHelper.post<BaseResponseType<boolean>>(
     `${baseAPI}/upgrade-package`,
@@ -118,6 +137,27 @@ export const upgradeCurrentPackage = async (params: {
         "Content-Type": "multipart/form-data",
       },
     }
+  );
+
+  return response;
+};
+
+export const uploadPaymentReceipt = async (params: {
+  file: File;
+  userId: string;
+  studentPackageId: number;
+}) => {
+  const formData = new FormData();
+
+  formData.append("file", params.file);
+
+  formData.append("userId", params.userId);
+
+  formData.append("studentPackageId", `${params.studentPackageId}`);
+
+  const { data: response } = await httpHelper.patch<BaseResponseType<boolean>>(
+    `${baseAPI}/uploadReceipt`,
+    formData
   );
   return response;
 };

@@ -1,0 +1,203 @@
+import useUpgradePackage from "@/libs/hooks/useUpgradePackage";
+import * as ImagePicker from "expo-image-picker";
+import React, { useState } from "react";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Button,
+  Dialog,
+  Icon,
+  Portal,
+  Text,
+  useTheme,
+} from "react-native-paper";
+
+type PackageType = {
+  id: number;
+  name: string;
+  price: number;
+};
+
+type UploadReceiptOnUpgradeProps = {
+  open: boolean;
+  handleClose: () => void;
+  plan: PackageType;
+};
+
+const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
+  open,
+  handleClose,
+  plan,
+}) => {
+  const theme = useTheme();
+  const [image, setImage] = useState<any>(null);
+  const { upgradePackage, handlePaymentReceiptChange } = useUpgradePackage();
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      console.log(asset);
+      const imageData = {
+        uri: asset.uri,
+        type: asset.type || "image/jpeg",
+        name: asset.fileName || `receipt_${Date.now()}.jpg`,
+      };
+      setImage(imageData);
+      handlePaymentReceiptChange(imageData);
+    }
+  };
+
+  return (
+    <Portal>
+      <Dialog visible={open} onDismiss={handleClose} style={styles.dialog}>
+        <Dialog.Title>Upload Receipt</Dialog.Title>
+        <Dialog.ScrollArea>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <Text style={styles.packageTitle}>
+              {plan.name}:{" "}
+              {new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+              }).format(plan.price)}
+            </Text>
+
+            <View style={styles.instructionsSection}>
+              <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+                <Text style={{ fontWeight: "bold" }}>
+                  Instructions for Payment:
+                </Text>
+              </Text>
+
+              <View style={styles.instructionItem}>
+                <Icon source="qrcode" color={theme.colors.primary} size={20} />
+                <Text style={styles.instructionText}>
+                  1. Scan the QR code or manually enter the account number
+                  provided below.
+                </Text>
+              </View>
+              <View style={styles.instructionItem}>
+                <Icon
+                  source="credit-card-check"
+                  color={theme.colors.primary}
+                  size={20}
+                />
+                <Text style={styles.instructionText}>
+                  2. Enter the payment amount.
+                </Text>
+              </View>
+              <View style={styles.instructionItem}>
+                <Icon
+                  source="monitor-screenshot"
+                  color={theme.colors.secondary}
+                  size={20}
+                />
+                <Text style={styles.instructionText}>
+                  3. Save or take a screenshot of the payment receipt.
+                </Text>
+              </View>
+              <View style={styles.instructionItem}>
+                <Icon
+                  source="cloud-upload"
+                  color={theme.colors.onSurfaceVariant}
+                  size={20}
+                />
+                <Text style={styles.instructionText}>
+                  4. Upload the receipt then upgrade.
+                </Text>
+              </View>
+            </View>
+
+            {/* Replace this with your React Native file uploader */}
+            <View
+              className="flex flex-col items-center"
+              style={{ marginVertical: 10 }}
+            >
+              {/* <FileUploader onSelectFile={handlePaymentReceiptChange} /> */}
+              <Button className="w-full" mode="outlined" onPress={pickImage}>
+                Upload Receipt
+              </Button>
+
+              {image && (
+                <Image
+                  className="w-full"
+                  source={{ uri: image.uri }}
+                  style={{ width: 250, height: 250, marginVertical: 10 }}
+                />
+              )}
+            </View>
+
+            {/* Replace this with your actual Payment component */}
+            <View style={styles.paymentBox}>
+              {/* <Payment /> */}
+              <Text style={{ color: "white" }}>
+                Payment options placeholder
+              </Text>
+            </View>
+          </ScrollView>
+        </Dialog.ScrollArea>
+
+        <Dialog.Actions style={styles.actions}>
+          <Button
+            onPress={() => {
+              handleClose();
+              setImage(null);
+            }}
+            textColor={theme.colors.primary}
+          >
+            Cancel
+          </Button>
+          <Button mode="contained" onPress={upgradePackage}>
+            Upgrade
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
+  );
+};
+
+export default UploadReceiptOnUpgradeDialog;
+
+const styles = StyleSheet.create({
+  dialog: {
+    maxHeight: "90%",
+    borderRadius: 16,
+  },
+  scrollContent: {
+    padding: 16,
+    gap: 10,
+  },
+  packageTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    backgroundColor: "#0241BE",
+    color: "white",
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  instructionsSection: {
+    marginTop: 16,
+  },
+  instructionItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 8,
+    gap: 8,
+  },
+  instructionText: {
+    flex: 1,
+  },
+  paymentBox: {
+    marginTop: 20,
+    backgroundColor: "#015bef",
+    padding: 16,
+    borderRadius: 8,
+  },
+  actions: {
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+  },
+});

@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
 import { BaseResponseType } from "../../types/BaseResponse";
 import { upgradeCurrentPackage } from "../api/services/user.api";
-
 type Users = {
   userId: string;
   username: string;
@@ -43,7 +43,12 @@ const useUpgradePackage = () => {
 
     fetchUser();
   }, []);
-  const [paymentReceipt, setPaymentReceipt] = useState<File | null>(null);
+  const [paymentReceipt, setPaymentReceipt] = useState<{
+    uri: string;
+    name: string;
+    type: string;
+  } | null>(null);
+
   const { isSuccess, mutate } = useMutation({
     mutationFn: upgradeCurrentPackage,
     onSuccess: (res) => {
@@ -55,32 +60,37 @@ const useUpgradePackage = () => {
         });
       }
     },
-    onError: (res) => {
-      Toast.show({
-        type: "error",
-        text1: `${res.message}`,
-      });
+    onError: (res: any) => {
+      Toast.show({ type: "error", text1: `${res.message}` });
     },
   });
 
-  const upgradePackage = (packageTypeId: number) => {
+  const upgradePackage = () => {
     if (!paymentReceipt) {
-      Toast.show({
-        type: "error",
-        text1: "Please upload a payment receipt.",
-      });
+      Toast.show({ type: "error", text1: "Please upload a payment receipt." });
       return;
     }
-    if (window.confirm("Upgrade package?")) {
-      mutate({
-        studentPackageId: userData?.studentPackageTypeId as number,
-        packageTypeId,
-        paymentReceipt: paymentReceipt,
-      });
-    }
+
+    Alert.alert("Upgrade Package", "Are you sure you want to upgrade?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Yes",
+        onPress: () => {
+          mutate({
+            studentPackageId: userData?.studentPackageTypeId as number,
+            packageTypeId: userData?.packageTypeId as number,
+            paymentReceipt,
+          });
+        },
+      },
+    ]);
   };
 
-  const handlePaymentReceiptChange = (file: File) => {
+  const handlePaymentReceiptChange = (file: {
+    uri: string;
+    name: string;
+    type: string;
+  }) => {
     setPaymentReceipt(file);
   };
 

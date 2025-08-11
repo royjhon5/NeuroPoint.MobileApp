@@ -1,4 +1,3 @@
-
 export interface GetZoomScheduleByLessonDto {
   lessonId: number;
   topic: string;

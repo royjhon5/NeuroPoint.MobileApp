@@ -9,23 +9,29 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends.",
+        "NSCameraUsageDescription": "The app uses the camera to let you take photos and videos.",
+        "NSMicrophoneUsageDescription": "This app uses the microphone to share your audio.",
+        "NSBluetoothPeripheralUsageDescription": "Required for Bluetooth audio devices"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo/neurologo.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO"
+      ],
       "edgeToEdgeEnabled": true,
       "package": "com.royjhon5.NeuropointMobileApp"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/logo/neurologo.png"
-    },
     "plugins": [
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -34,8 +40,19 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
       ]
     ],
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/logo/neurologo.png"
+    },
     "experiments": {
       "typedRoutes": true
     },

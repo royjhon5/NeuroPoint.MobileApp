@@ -5,8 +5,7 @@ const httpHelper = axios.create({
   baseURL: "https://prod01-neuropoint-appsvc.azurewebsites.net/",
   timeout: 60000,
   headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+    Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
   },
 });
 
@@ -20,7 +19,6 @@ httpHelper.interceptors.request.use(
     if (userId) {
       config.headers.userid = userId;
     }
-
     return config;
   },
   function (error) {

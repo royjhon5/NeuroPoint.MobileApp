@@ -92,3 +92,22 @@ export type GetUserDto = {
   address: string;
   licenseNumber: string;
 };
+
+export interface UserDto {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  userName: string;
+  branchId: number;
+  roles: string[];
+  profileFeedback: string;
+  profile: string;
+  isProfileApproved: boolean;
+  package?: {
+    packageName: string;
+    price: string;
+  };
+  isDisabled: boolean;
+}

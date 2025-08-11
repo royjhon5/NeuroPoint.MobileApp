@@ -25,12 +25,19 @@ export const uploadPaymentReceipt = async (params: {
   studentPackageId: number;
 }) => {
   const formData = new FormData();
-  formData.append("file", params.file);
+  formData.append("file", params.file as any); // RN hack
+
   formData.append("userId", params.userId);
   formData.append("studentPackageId", `${params.studentPackageId}`);
+
   const { data: response } = await httpHelper.patch<BaseResponseType<boolean>>(
     `${baseAPI}/uploadReceipt`,
-    formData
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
   return response;
 };

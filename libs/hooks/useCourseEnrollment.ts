@@ -21,7 +21,7 @@ const useCourseEnrollment = () => {
           text1: `${response.validatorError.message}`,
         });
       }
-      router.push("/dashboard/my-couses/myCourse");
+      router.push("/(dashboard)/my-couses/myCourse");
     },
     onError: (res) => {
       Toast.show({

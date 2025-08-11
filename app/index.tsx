@@ -1,14 +1,36 @@
+import React from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+
 import HeroSection from "@/app/sections/HeroSection";
+import OurExpertTeacher from "@/app/sections/OurExpertTeachers";
+import OurSubject from "@/app/sections/OurSubject";
 import VideoSection from "@/app/sections/VideoSection";
 import WhyComponent from "@/app/sections/WhySection";
-import { ScrollView } from "react-native-gesture-handler";
 
 export default function LandingPage() {
   return (
-    <ScrollView className="mb-10 bg-[#FFFFFF] p-safe">
-      <HeroSection />
-      <VideoSection />
-      <WhyComponent />
-    </ScrollView>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <HeroSection />
+        <VideoSection />
+        <WhyComponent />
+        <OurSubject />
+        <OurExpertTeacher />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+});

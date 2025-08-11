@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
   },
   textBlock: {
     paddingHorizontal: 20,
+    marginBottom: 40,
   },
   whyTitle: {
     fontSize: 22,
