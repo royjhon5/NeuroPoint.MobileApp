@@ -20,16 +20,16 @@ interface SignUpFormProps {
   isPasswordInvalid: () => boolean;
 }
 
-const SignUpForm = ({
-  isPartner,
-  branchOptions,
-  details,
-  setSelectedBranchId,
-  isFormValid,
-  isPasswordInvalid,
-}: SignUpFormProps) => {
+const SignUpForm = ({ isPartner, branchOptions }: SignUpFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [value, setValue] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [branchId, setBranchId] = useState<number | null>(null);
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -57,6 +57,8 @@ const SignUpForm = ({
               left={<TextInput.Icon icon="account-circle" />}
               mode="outlined"
               style={styles.input}
+              value={firstName}
+              onChangeText={setFirstName}
             />
 
             {/* Last Name */}
@@ -65,6 +67,8 @@ const SignUpForm = ({
               left={<TextInput.Icon icon="account-circle" />}
               mode="outlined"
               style={styles.input}
+              value={lastName}
+              onChangeText={setLastName}
             />
 
             {/* Mobile Number */}
@@ -72,6 +76,8 @@ const SignUpForm = ({
               label="Mobile Number"
               left={<TextInput.Icon icon="phone" />}
               mode="outlined"
+              value={mobileNumber}
+              onChangeText={setMobileNumber}
             />
 
             {/* Address */}
@@ -82,6 +88,8 @@ const SignUpForm = ({
               multiline
               numberOfLines={2}
               style={styles.input}
+              value={address}
+              onChangeText={setAddress}
             />
 
             {/* Email */}
@@ -90,6 +98,8 @@ const SignUpForm = ({
               left={<TextInput.Icon icon="email" />}
               mode="outlined"
               style={styles.input}
+              value={email}
+              onChangeText={setEmail}
             />
 
             {/* Branch Select */}
@@ -99,8 +109,8 @@ const SignUpForm = ({
               labelField="name"
               valueField="id"
               placeholder="Select Branch"
-              value={value}
-              onChange={(item) => setSelectedBranchId(item.id)}
+              value={branchId}
+              onChange={(item) => setBranchId(item.id)}
             />
             {/* Password */}
             <TextInput
@@ -115,6 +125,8 @@ const SignUpForm = ({
               }
               mode="outlined"
               style={styles.input}
+              value={password}
+              onChangeText={setPassword}
             />
 
             {/* Confirm Password */}
@@ -130,17 +142,28 @@ const SignUpForm = ({
               }
               mode="outlined"
               style={styles.input}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
             />
-
             {/* Sign Up Button */}
             <Button
               mode="contained"
               style={styles.signupBtn}
               onPress={() => {
-                if (isPasswordInvalid()) {
-                  // Show error (you may use Toast or Snackbar)
-                  return;
-                }
+                const formData = {
+                  firstName,
+                  lastName,
+                  mobileNumber,
+                  address,
+                  email,
+                  password,
+                  confirmPassword,
+                  branchId,
+                };
+                router.push({
+                  pathname: "/(auth)/register/packagetSelection",
+                  params: { formData: JSON.stringify(formData) },
+                });
               }}
             >
               SIGN UP

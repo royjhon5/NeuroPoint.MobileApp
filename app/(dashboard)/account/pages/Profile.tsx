@@ -64,7 +64,6 @@ const Profile: React.FC = () => {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      console.log("Selected Image:", uri);
     }
   };
 
@@ -255,8 +254,6 @@ const Profile: React.FC = () => {
           plans={availablePlans()}
           hasPendingUpgrade={hasPendingUpgrade}
           onUpgrade={(plan) => {
-            console.log("Upgrade to:", plan.name);
-            // You can also close the dialog or trigger API call here
             setOpenUpgradeDialog(false);
           }}
         />

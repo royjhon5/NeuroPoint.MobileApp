@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
@@ -19,7 +20,7 @@ type Users = {
   price: number;
   studentPackageTypeId: number;
 };
-const useUpgradePackage = () => {
+const useUpgradePackage = (onUpgradeSuccess?: () => void) => {
   const [userData, setUserData] = useState<Users | null>(null);
   const getData = async () => {
     try {
@@ -49,7 +50,7 @@ const useUpgradePackage = () => {
     type: string;
   } | null>(null);
 
-  const { isSuccess, mutate } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: upgradeCurrentPackage,
     onSuccess: (res) => {
       const data = res as BaseResponseType<boolean>;
@@ -58,14 +59,15 @@ const useUpgradePackage = () => {
           type: "success",
           text1: "Package successfully upgraded.",
         });
+        if (onUpgradeSuccess) onUpgradeSuccess(); // close dialog here
       }
     },
-    onError: (res: any) => {
+    onError: (res: AxiosError) => {
       Toast.show({ type: "error", text1: `${res.message}` });
     },
   });
 
-  const upgradePackage = () => {
+  const upgradePackage = (packageTypeId: number) => {
     if (!paymentReceipt) {
       Toast.show({ type: "error", text1: "Please upload a payment receipt." });
       return;
@@ -78,7 +80,7 @@ const useUpgradePackage = () => {
         onPress: () => {
           mutate({
             studentPackageId: userData?.studentPackageTypeId as number,
-            packageTypeId: userData?.packageTypeId as number,
+            packageTypeId: packageTypeId,
             paymentReceipt,
           });
         },
@@ -96,7 +98,6 @@ const useUpgradePackage = () => {
 
   return {
     upgradePackage,
-    isSuccess,
     handlePaymentReceiptChange,
   };
 };

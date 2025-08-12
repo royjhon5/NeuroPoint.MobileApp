@@ -5,12 +5,14 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import { BaseResponseType } from "../../types/BaseResponse";
-import { uploadPaymentReceiptOnEnroll } from "../api/services/payment.api";
+import {
+  RNFile,
+  uploadPaymentReceiptOnEnroll,
+} from "../api/services/payment.api";
 import { userSignUp } from "../api/services/user.api";
 import { registerSchema, RegisterSchemaType } from "../schema/User.schema";
 import useBranch from "./useBranch";
 import useSignIn from "./useSignIn";
-import useUserRoles from "./useUserRoles";
 
 export interface SignUpUserDetails {
   firstName: string;
@@ -26,9 +28,12 @@ const useSignUp = () => {
   const router = useRouter();
   const { onSubmit: signInUser } = useSignIn();
   const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
-  const { userRoles } = useUserRoles();
   const { branchOptions } = useBranch();
-  const [paymentReceipt, setPaymentReceipt] = useState<File | null>(null);
+  const [paymentReceipt, setPaymentReceipt] = useState<RNFile>({
+    uri: "",
+    name: "",
+    type: "",
+  });
   const formRef = useRef<HTMLFormElement>(null);
   const packageType = useRef<number>(2);
 
@@ -71,7 +76,7 @@ const useSignUp = () => {
     try {
       const response = await uploadPaymentReceiptOnEnroll({
         userId,
-        file: paymentReceipt as File,
+        file: paymentReceipt,
       });
 
       if (response.isSuccess) {
@@ -97,26 +102,14 @@ const useSignUp = () => {
   const onSubmit = (data: RegisterSchemaType) => {
     const { firstName, lastName, email, password, mobileNumber, address } =
       data;
-
-    const studentRoleId = (userRoles as { id: number; name: string }[]).find(
-      (role) => role.name === "Student"
-    )?.id;
-
-    if (!studentRoleId) {
-      Toast.show({
-        type: "error",
-        text2: "Student role not found.",
-      });
-      return;
-    }
     mutation.mutate({
       firstName,
       lastName,
       email,
       password,
       packageTypeId: packageType.current,
-      roleId: `${studentRoleId}`,
-      branchId: branchId as number,
+      roleId: "546a8454-a822-47a6-81d0-ca93b5dc85a4",
+      branchId: 1,
       mobileNumber,
       address,
     });
@@ -135,16 +128,12 @@ const useSignUp = () => {
 
     // trigger validation for all fields
     trigger();
-    const isPasswordMatched =
-      getValues("password") === getValues("confirmPassword");
     if (
       getValues("firstName") &&
       getValues("lastName") &&
       getValues("email") &&
       getValues("password") &&
-      getValues("confirmPassword") &&
-      branchId &&
-      isPasswordMatched
+      branchId
     ) {
       return true;
     } else {
@@ -161,7 +150,11 @@ const useSignUp = () => {
     return !hasNonAlphanumeric || !hasLowercase || !hasUppercase ? true : false;
   };
 
-  const handlePaymentReceiptChange = (file: File) => {
+  const handlePaymentReceiptChange = (file: {
+    uri: string;
+    name: string;
+    type: string;
+  }) => {
     setPaymentReceipt(file);
   };
 
@@ -180,7 +173,6 @@ const useSignUp = () => {
       lastName: getValues("lastName"),
       email: getValues("email"),
       password: getValues("password"),
-      confirmPassword: getValues("confirmPassword"),
       branchId,
       packageType: packageType.current,
     } as SignUpUserDetails,

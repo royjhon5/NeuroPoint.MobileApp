@@ -4,9 +4,9 @@ import httpHelper from "../httpAxios";
 
 const baseAPI = "PackageType";
 
-export const getPackageTypes = async (branchId: number) => {
+export const getPackageTypes = async () => {
   const { data: response } = await httpHelper.get<
     BaseResponseType<PackageTypeDTO[]>
-  >(`${baseAPI}?branchId=${branchId}`);
+  >(`${baseAPI}?branchId=null`);
   return response;
 };

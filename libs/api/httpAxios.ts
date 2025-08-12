@@ -1,8 +1,9 @@
+import { HttpResponseError } from "@/types/ResponseError";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios, { AxiosResponse, isAxiosError } from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const httpHelper = axios.create({
-  baseURL: "https://prod01-neuropoint-appsvc.azurewebsites.net/",
+  baseURL: "https://prod01-neuropoint-appsvc.azurewebsites.net",
   timeout: 60000,
 });
 
@@ -25,13 +26,14 @@ httpHelper.interceptors.request.use(
 );
 
 httpHelper.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  function (error) {
-    if (isAxiosError(error)) {
-      console.log("Axios error:", error);
-      return Promise.reject(error.response?.data || error.message);
-    }
-    return Promise.reject(error);
+  function (response: AxiosResponse) {
+    // Handle response data
+    return response;
+  },
+  function (error: HttpResponseError<any>) {
+    // Handle response error
+    console.log("Error2: ", error);
+    return Promise.reject(error.response.data);
   }
 );
 

@@ -1,3 +1,8 @@
+export type Feature = {
+  name: string;
+  featureId: number;
+};
+
 export type PackageTypeDTO = {
   id: number;
   name: string;
@@ -5,8 +10,8 @@ export type PackageTypeDTO = {
   price: number;
   resourceAccessPercentage: number;
   partnerId: number;
-  slashedPrice: string;
-  discountPercentage: string;
-  thumbnailUrl: string;
-  features: { featureId: number; id: number; name: string }[];
+  slashedPrice: number;
+  discountPercentage: number;
+  thumbnailUrl: string | null;
+  features: Feature[];
 };

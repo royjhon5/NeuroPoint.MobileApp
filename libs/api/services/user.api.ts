@@ -26,6 +26,7 @@ export const userSignUp = async (params: UserSignUpDto) => {
       ...params,
     }
   );
+  console.log(response);
   return response;
 };
 
@@ -126,7 +127,7 @@ export const upgradeCurrentPackage = async (params: {
   formData.append("packageTypeId", `${params.packageTypeId}`);
   formData.append("paymentReceipt", {
     uri: params.paymentReceipt.uri,
-    type: params.paymentReceipt.type,
+    type: "image/jpeg",
     name: params.paymentReceipt.name,
   } as any);
 

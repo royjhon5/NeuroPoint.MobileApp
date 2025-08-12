@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPackageTypes } from "../api/services/packagetype.api";
 
-const usePackageTypes = (branchId: number) => {
+const usePackageTypes = () => {
   const { isFetching, refetch, data } = useQuery({
-    queryKey: ["package-config", branchId],
+    queryKey: ["package-config"],
     queryFn: async () => {
-      const response = await getPackageTypes(branchId);
+      const response = await getPackageTypes();
       return response;
     },
   });

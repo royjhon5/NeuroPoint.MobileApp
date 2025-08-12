@@ -1,4 +1,4 @@
-import useUpgradePackage from "@/libs/hooks/useUpgradePackage";
+import useSignUp from "@/libs/hooks/useSignUp";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
@@ -21,21 +21,18 @@ type UploadReceiptOnUpgradeProps = {
   open: boolean;
   handleClose: () => void;
   plan: PackageType;
+  userDetails: any;
 };
 
-const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
+const UploadPaymentDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
   open,
   handleClose,
   plan,
+  userDetails,
 }) => {
   const theme = useTheme();
   const [image, setImage] = useState<any>(null);
-  const { upgradePackage, handlePaymentReceiptChange } = useUpgradePackage(
-    () => {
-      handleClose();
-      setImage(null);
-    }
-  );
+  const { onSubmit, handlePaymentReceiptChange } = useSignUp();
   const pickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -61,6 +58,17 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
     }
   };
 
+  const handleConfirm = () => {
+    onSubmit({
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
+      email: userDetails.email,
+      password: userDetails.password,
+      mobileNumber: userDetails.mobileNumber,
+      address: userDetails.address,
+    });
+  };
+
   return (
     <Portal>
       <Dialog visible={open} onDismiss={handleClose} style={styles.dialog}>
@@ -68,7 +76,7 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
         <Dialog.ScrollArea>
           <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text style={styles.packageTitle}>
-              {plan.name}:{" "}
+              Payment:
               {new Intl.NumberFormat("en-PH", {
                 style: "currency",
                 currency: "PHP",
@@ -160,13 +168,8 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
           >
             Cancel
           </Button>
-          <Button
-            mode="contained"
-            onPress={() => {
-              upgradePackage(plan.id);
-            }}
-          >
-            Upgrade
+          <Button mode="contained" onPress={handleConfirm}>
+            Enroll
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -174,7 +177,7 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
   );
 };
 
-export default UploadReceiptOnUpgradeDialog;
+export default UploadPaymentDialog;
 
 const styles = StyleSheet.create({
   dialog: {

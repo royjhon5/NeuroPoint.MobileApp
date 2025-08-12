@@ -42,19 +42,31 @@ export const uploadPaymentReceipt = async (params: {
   return response;
 };
 
+export type RNFile = { uri: string; type: string; name: string };
 export const uploadPaymentReceiptOnEnroll = async (params: {
-  file: File;
+  file: RNFile;
   userId: string;
 }) => {
   const formData = new FormData();
 
-  formData.append("file", params.file);
+  formData.append("file", {
+    uri: params.file.uri,
+    type: "image/jpeg",
+    name: params.file.name,
+  } as any);
+
+  console.log(params.file);
 
   formData.append("userId", params.userId);
 
   const { data: response } = await httpHelper.patch<BaseResponseType<boolean>>(
     `${baseAPI}/upload-payment-on-enroll`,
-    formData
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
   return response;
 };
