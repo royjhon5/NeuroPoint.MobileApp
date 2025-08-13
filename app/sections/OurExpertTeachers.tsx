@@ -7,7 +7,7 @@ const OurExpertTeacher = () => {
       <Text style={{ fontSize: 23, fontWeight: "bold" }}>
         Our Expert Teacher
       </Text>
-      <Card style={{ width: "100%" }}>
+      <Card style={{ width: "100%", marginTop: 15 }}>
         <Card.Content>
           <Image
             source={{ uri: "https://www.neuropoint.io/ms-flores.jpg" }}

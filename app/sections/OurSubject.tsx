@@ -4,12 +4,12 @@ import { Card, Icon } from "react-native-paper";
 const OurSubject = () => {
   return (
     <>
-      <View className="flex flex-col items-center justify-center gap-9 p-5">
+      <View className="flex flex-col items-center justify-center gap-2 p-5">
         <Text className="text-blue-500">OUR SUBJECT</Text>
-        <Text style={{ fontWeight: "bold", fontSize: 23, marginTop: 6 }}>
+        <Text style={{ fontWeight: "bold", fontSize: 23 }}>
           Programs Designed With Care
         </Text>
-        <Text className="text-justify mt-2">
+        <Text className="text-justify mt-2" style={{ textAlign: "center" }}>
           At NeuroPoint, We Focus On Building Strong Foundations In Essential
           Subjects, While Making Learning Engaging, Gentle, And Structured. Our
           Resources For Programs In English, Math, And Science Are Thoughtfully

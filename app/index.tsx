@@ -2,6 +2,8 @@ import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
+import AboutUs from "@/app/sections/AboutUs";
+import AllrightsReserve from "@/app/sections/AllRightsReserve";
 import HeroSection from "@/app/sections/HeroSection";
 import OurExpertTeacher from "@/app/sections/OurExpertTeachers";
 import OurSubject from "@/app/sections/OurSubject";
@@ -20,6 +22,8 @@ export default function LandingPage() {
         <WhyComponent />
         <OurSubject />
         <OurExpertTeacher />
+        <AboutUs />
+        <AllrightsReserve />
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import { ResizeMode, Video } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { useState } from "react";
 import {
   Dimensions,
@@ -20,7 +20,6 @@ import { WebView } from "react-native-webview";
 import useGetEbookByPackage from "../../../libs/hooks/useGetEbook";
 import useGetHandOutByPackage from "../../../libs/hooks/useGetHandout";
 import useGetVideoByPackage from "../../../libs/hooks/useGetVideoByPackage";
-
 export default function LibraryComponent() {
   const { videopackagedata } = useGetVideoByPackage(2);
   const { ebookbypackage } = useGetEbookByPackage(2);
@@ -35,6 +34,9 @@ export default function LibraryComponent() {
 
   const handleCardPress = (item: any) => {
     setSelectedItem({ url: item.url, type: item.type });
+    if (item.type === "video") {
+      setVideoSource(item.url); // update source so player re-inits
+    }
     setVisible(true);
   };
 
@@ -76,7 +78,11 @@ export default function LibraryComponent() {
   };
 
   const filteredData = getFilteredData();
-
+  const [videoSource, setVideoSource] = useState<string | null>(null);
+  const player = useVideoPlayer(videoSource ?? "", (player) => {
+    player.loop = true;
+    player.play();
+  });
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -140,6 +146,7 @@ export default function LibraryComponent() {
               setVisible(false);
               setSelectedItem(null);
               setIsLoading(true);
+              setVideoSource(null);
             }}
             contentContainerStyle={{
               backgroundColor: "white",
@@ -163,18 +170,12 @@ export default function LibraryComponent() {
               </View>
             )}
 
-            {selectedItem?.type === "video" && (
-              <Video
-                source={{ uri: selectedItem.url }}
-                useNativeControls
-                shouldPlay
-                resizeMode={ResizeMode.CONTAIN}
-                onLoad={() => setIsLoading(false)}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  opacity: isLoading ? 0 : 1,
-                }}
+            {selectedItem?.type === "video" && player && (
+              <VideoView
+                style={styles.video}
+                player={player}
+                allowsFullscreen
+                allowsPictureInPicture
               />
             )}
 
@@ -244,5 +245,11 @@ const styles = StyleSheet.create({
   },
   segmentedBtns: {
     marginTop: 10,
+  },
+  video: {
+    width: "100%",
+    height: 200,
+    marginTop: 10,
+    borderRadius: 8,
   },
 });

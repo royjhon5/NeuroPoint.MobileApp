@@ -1,15 +1,10 @@
 import { BranchDto } from "@/types/DTO/BranchDTO";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Card, TextInput } from "react-native-paper";
 interface SignUpFormProps {
   isPartner: boolean;
@@ -32,10 +27,12 @@ const SignUpForm = ({ isPartner, branchOptions }: SignUpFormProps) => {
   const [branchId, setBranchId] = useState<number | null>(null);
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
+      <KeyboardAwareScrollView
         style={styles.container}
-        behavior={Platform.OS === "android" ? "padding" : undefined}
-        keyboardVerticalOffset={80}
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid={true}
+        extraScrollHeight={20} // scroll a bit more so the input isn't flush against keyboard
+        keyboardOpeningTime={0}
       >
         <Card style={styles.card}>
           <Card.Content>
@@ -177,7 +174,7 @@ const SignUpForm = ({ isPartner, branchOptions }: SignUpFormProps) => {
             </TouchableOpacity>
           </Card.Content>
         </Card>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
