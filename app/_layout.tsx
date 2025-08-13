@@ -78,7 +78,6 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
   const paperTheme =
     colorScheme === "dark"
       ? { ...MD3LightTheme, colors: Colors.light }
@@ -90,12 +89,12 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
             <StatusBar />
-
             <PaperProvider theme={paperTheme}>
               <ErrorBoundary>
                 <DrawerProvider>
                   <DrawerWrapper>
                     <AppBarComponent />
+
                     <Slot />
                     <Toast />
                     <FAB

@@ -49,18 +49,22 @@ const useSignUp = () => {
   const branchId = selectedBranchId;
   const mutation = useMutation({
     mutationFn: userSignUp,
-    onSuccess: async (res) => {
+    onSuccess: async (res, variables) => {
       const data = res as BaseResponseType<string[]>;
       if (data.isSuccess && data.statusCode === 201) {
         const userId = data.response[0];
         Toast.show({
-          type: "error",
+          type: "success",
           text2: "Enrollement Success!",
         });
         router.push("/(auth)/login");
 
         if (paymentReceipt) {
-          await uploadPackagePaymentReceipt(userId);
+          await uploadPackagePaymentReceipt(
+            userId,
+            variables.email,
+            variables.password
+          );
         }
       }
     },
@@ -72,7 +76,11 @@ const useSignUp = () => {
     },
   });
 
-  const uploadPackagePaymentReceipt = async (userId: string) => {
+  const uploadPackagePaymentReceipt = async (
+    userId: string,
+    email: string,
+    password: string
+  ) => {
     try {
       const response = await uploadPaymentReceiptOnEnroll({
         userId,
@@ -81,8 +89,8 @@ const useSignUp = () => {
 
       if (response.isSuccess) {
         signInUser({
-          email: getValues("email"),
-          password: getValues("password"),
+          email,
+          password,
         });
       } else {
         Toast.show({
