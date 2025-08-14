@@ -29,8 +29,7 @@
         "RECORD_AUDIO"
       ],
       "edgeToEdgeEnabled": true,
-      "package": "com.royjhon5.NeuropointMobileApp",
-      "versionCode": 142025
+      "package": "com.royjhon5.NeuropointMobileApp"
     },
     "plugins": [
       [
