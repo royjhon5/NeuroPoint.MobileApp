@@ -64,7 +64,7 @@ export default function JoinMeeting(props: JoinMeetingProps) {
                     signature: '${signature}',
                     meetingNumber: '${props.meetingId}',
                     userName: '${props.name}',
-                    sdkKey: '${process.env.EXPO_PUBLIC_CLIENTSDK_ZOOM}',
+                    sdkKey: 'AQAe2uWuRLiV5d2gCsOrMQ',
                     passWord: '${props.password}',
                     success: function () {
                       console.log('Joined meeting successfully');
