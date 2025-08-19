@@ -9,8 +9,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Slot, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useMemo } from "react";
-import { Appearance, useColorScheme, ViewStyle } from "react-native";
+import { useMemo } from "react";
+import { ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FAB, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -29,16 +29,12 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const pathname = usePathname();
   const router = useRouter();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  useEffect(() => {
-    Appearance.setColorScheme?.("light"); // Only works on some platforms
-  }, []);
   const fabStyle = useMemo<ViewStyle>(() => {
     if (pathname === "/dashboard") {
       return {
@@ -78,10 +74,13 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-  const paperTheme =
-    colorScheme === "dark"
-      ? { ...MD3LightTheme, colors: Colors.light }
-      : { ...MD3LightTheme, colors: Colors.light };
+  const paperTheme = {
+    ...MD3LightTheme,
+    colors: {
+      ...MD3LightTheme.colors,
+      ...Colors.light,
+    },
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

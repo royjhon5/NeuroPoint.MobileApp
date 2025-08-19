@@ -3,10 +3,9 @@
     "name": "NeuropointMobileApp",
     "slug": "NeuropointMobileApp",
     "version": "1.0.0",
-    "orientation": "portrait",
     "icon": "./assets/logo/neurologo.png",
     "scheme": "neuropointmobileapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -23,10 +22,10 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "RECORD_AUDIO"
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.royjhon5.NeuropointMobileApp"
@@ -59,8 +58,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "de6fa2cf-3a9c-49c0-865c-356b20972aee"
+        "projectId": "0cc18de1-ac79-4f59-ba51-b43af0a2bdd3"
       }
-    }
+    },
+    "owner": "royjhon6"
   }
 }
