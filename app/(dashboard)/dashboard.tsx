@@ -11,6 +11,7 @@ import {
   Icon,
   Provider,
 } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 type MyRoute = {
   key: string;
   title: string;
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const [index, setIndex] = useState(0);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const router = useRouter();
+  const inset = useSafeAreaInsets();
 
   const routes: MyRoute[] = [
     { key: "mycourses", title: "My Courses", icon: "view-agenda" },
@@ -62,7 +64,7 @@ export default function Dashboard() {
             position: "absolute",
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: inset.bottom,
             height: 70,
           }}
           navigationState={{ index, routes }}

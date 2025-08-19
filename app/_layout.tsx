@@ -14,7 +14,10 @@ import { ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FAB, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import "../global.css";
 export const unstable_settings = {
@@ -31,6 +34,7 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   const pathname = usePathname();
   const router = useRouter();
+  const inset = useSafeAreaInsets();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -39,7 +43,7 @@ export default function RootLayout() {
     if (pathname === "/dashboard") {
       return {
         position: "absolute",
-        bottom: 75,
+        bottom: 75 + inset.bottom,
         right: 16,
         borderRadius: 50,
       };
@@ -58,7 +62,7 @@ export default function RootLayout() {
     } else if (pathname.startsWith("/account")) {
       return {
         position: "absolute",
-        bottom: 105,
+        bottom: 90 + inset.bottom,
         right: 16,
         borderRadius: 50,
       };
@@ -69,7 +73,7 @@ export default function RootLayout() {
       right: 16,
       borderRadius: 50,
     };
-  }, [pathname]);
+  }, [pathname, inset.bottom]);
 
   if (!loaded) {
     return null;

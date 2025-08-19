@@ -1,8 +1,7 @@
 import { getVideoSdkSignature } from "@/libs/api/services/zoom.api";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Button } from "react-native";
-
+import ZoomUs from "react-native-zoom-us";
 interface JoinMeetingProps {
   role: number;
   label: string;
@@ -13,8 +12,6 @@ interface JoinMeetingProps {
 
 export default function JoinMeeting(props: JoinMeetingProps) {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
   const getSignatureAndJoin = () => {
     Alert.alert("Proceed to Zoom?", undefined, [
       { text: "Cancel", style: "cancel" },
@@ -29,7 +26,15 @@ export default function JoinMeeting(props: JoinMeetingProps) {
             });
 
             if (isSuccess && response) {
-              startMeeting(response);
+              await ZoomUs.initialize({
+                jwtToken: response,
+                domain: "zoom.us",
+              });
+              await ZoomUs.joinMeeting({
+                userName: props.name,
+                meetingNumber: props.meetingId.toString(),
+                password: props.password,
+              });
             } else {
               Alert.alert("Error", "Failed to get Zoom signature.");
             }
@@ -42,50 +47,6 @@ export default function JoinMeeting(props: JoinMeetingProps) {
         },
       },
     ]);
-  };
-
-  const startMeeting = (signature: string) => {
-    const html = `
-      <html>
-        <head>
-          <script src="https://source.zoom.us/2.17.0/lib/vendor/react.min.js"></script>
-          <script src="https://source.zoom.us/2.17.0/lib/vendor/react-dom.min.js"></script>
-          <script src="https://source.zoom.us/zoom-meeting-2.17.0.min.js"></script>
-          <script>
-            ZoomMtg.setZoomJSLib('https://source.zoom.us/2.17.0/lib', '/av');
-            ZoomMtg.preLoadWasm();
-            ZoomMtg.prepareJssdk();
-
-            document.addEventListener('DOMContentLoaded', function () {
-              ZoomMtg.init({
-                leaveUrl: 'https://zoom.us',
-                success: function () {
-                  ZoomMtg.join({
-                    signature: '${signature}',
-                    meetingNumber: '${props.meetingId}',
-                    userName: '${props.name}',
-                    sdkKey: 'AQAe2uWuRLiV5d2gCsOrMQ',
-                    passWord: '${props.password}',
-                    success: function () {
-                      console.log('Joined meeting successfully');
-                    },
-                    error: function (error) {
-                      console.error(error);
-                    }
-                  });
-                }
-              });
-            });
-          </script>
-        </head>
-        <body></body>
-      </html>
-    `;
-
-    router.push({
-      pathname: "/(dashboard)/start-course/content-type/ZoomViewScreen",
-      params: { html: encodeURIComponent(html) }, // pass as URL param
-    });
   };
 
   return loading ? (

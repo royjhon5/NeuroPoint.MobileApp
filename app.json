@@ -22,10 +22,12 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO"
+        "INTERNET",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.royjhon5.NeuropointMobileApp"

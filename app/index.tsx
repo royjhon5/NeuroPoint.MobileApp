@@ -12,7 +12,7 @@ import WhyComponent from "@/app/sections/WhySection";
 
 export default function LandingPage() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} className="p-safe">
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
