@@ -1,6 +1,7 @@
 import { getVideoSdkSignature } from "@/libs/api/services/zoom.api";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Button } from "react-native";
+import ZoomUs from "react-native-zoom-us";
 interface JoinMeetingProps {
   role: number;
   label: string;
@@ -26,20 +27,9 @@ export default function JoinMeeting(props: JoinMeetingProps) {
 
             if (isSuccess && response) {
               console.log(response);
-              // const result = await zoom.joinSession({
-              //   sessionName: props.meetingId.toString(),
-              //   sessionPassword: props.password,
-              //   token: response,
-              //   userName: props.name,
-              //   audioOptions: {
-              //     connect: true,
-              //     mute: false,
-              //   },
-              //   videoOptions: {
-              //     localVideoOn: true,
-              //   },
-              //   sessionIdleTimeoutMins: 40,
-              // });
+              await ZoomUs.initialize({
+                jwtToken: response,
+              });
             } else {
               Alert.alert("Error", "Failed to get Zoom signature.");
             }
