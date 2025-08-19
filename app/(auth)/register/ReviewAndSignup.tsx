@@ -110,16 +110,6 @@ const ReviewSignUp = (props: ReviewSignUpProps) => {
               "Confirm Package"
             )}
           </Button>
-
-          {/* Back Button */}
-          <Button
-            mode="outlined"
-            onPress={props.onBack}
-            style={{ borderRadius: 12 }}
-            icon="arrow-left"
-          >
-            Back to Packages
-          </Button>
           <UploadPaymentDialog
             plan={plan as PackageTypeDTO}
             open={uploadPaymentDialog}
