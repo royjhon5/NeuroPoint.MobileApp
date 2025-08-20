@@ -1,5 +1,4 @@
 import { getVideoSdkSignature } from "@/libs/api/services/zoom.api";
-import { useZoom } from "@zoom/meetingsdk-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Button } from "react-native";
 interface JoinMeetingProps {
@@ -12,7 +11,6 @@ interface JoinMeetingProps {
 
 export default function JoinMeeting(props: JoinMeetingProps) {
   const [loading, setLoading] = useState(false);
-  const zoom = useZoom();
   const getSignatureAndJoin = () => {
     Alert.alert("Proceed to Zoom?", undefined, [
       { text: "Cancel", style: "cancel" },
@@ -27,7 +25,6 @@ export default function JoinMeeting(props: JoinMeetingProps) {
             });
 
             if (isSuccess && response) {
-              console.log(response);
               handleJoin(response);
             } else {
               Alert.alert("Error", "Failed to get Zoom signature.");
@@ -43,13 +40,7 @@ export default function JoinMeeting(props: JoinMeetingProps) {
     ]);
   };
 
-  const handleJoin = async (signature: string) => {
-    await zoom.startMeeting({
-      userName: props.name,
-      meetingNumber: props.meetingId.toString(),
-      zoomAccessToken: signature,
-    });
-  };
+  const handleJoin = async (signature: string) => {};
 
   return loading ? (
     <ActivityIndicator size="small" />
