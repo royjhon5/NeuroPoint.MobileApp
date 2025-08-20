@@ -5,7 +5,9 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Colors } from "@/constants/Colors";
 import { AuthProvider } from "@/context/AuthContext";
 import { DrawerProvider } from "@/context/DrawerContext";
+import { usePermission } from "@/utils/lib";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ZoomVideoSdkProvider } from "@zoom/react-native-videosdk";
 import { useFonts } from "expo-font";
 import { Slot, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -32,6 +34,7 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
+  usePermission();
   const pathname = usePathname();
   const router = useRouter();
   const inset = useSafeAreaInsets();
@@ -87,33 +90,42 @@ export default function RootLayout() {
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <SafeAreaProvider>
-            <StatusBar />
-            <PaperProvider theme={paperTheme}>
-              <ErrorBoundary>
-                <DrawerProvider>
-                  <DrawerWrapper>
-                    <AppBarComponent />
+    <ZoomVideoSdkProvider
+      config={{
+        appGroupId: "test.app.group",
+        domain: "zoom.us",
+        enableLog: true,
+      }}
+    >
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider>
+              <StatusBar />
+              <PaperProvider theme={paperTheme}>
+                <ErrorBoundary>
+                  <DrawerProvider>
+                    <DrawerWrapper>
+                      <AppBarComponent />
 
-                    <Slot />
-                    <Toast />
-                    <FAB
-                      icon="message"
-                      style={fabStyle}
-                      onPress={() => {
-                        router.push("/neuro-AI");
-                      }}
-                    />
-                  </DrawerWrapper>
-                </DrawerProvider>
-              </ErrorBoundary>
-            </PaperProvider>
-          </SafeAreaProvider>
-        </QueryClientProvider>
-      </AuthProvider>
-    </GestureHandlerRootView>
+                      <Slot />
+
+                      <Toast />
+                      <FAB
+                        icon="message"
+                        style={fabStyle}
+                        onPress={() => {
+                          router.push("/neuro-AI");
+                        }}
+                      />
+                    </DrawerWrapper>
+                  </DrawerProvider>
+                </ErrorBoundary>
+              </PaperProvider>
+            </SafeAreaProvider>
+          </QueryClientProvider>
+        </AuthProvider>
+      </GestureHandlerRootView>
+    </ZoomVideoSdkProvider>
   );
 }

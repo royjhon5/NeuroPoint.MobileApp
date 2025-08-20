@@ -30,7 +30,7 @@ export default function Account() {
 
   return (
     <Provider>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
         {renderScene({ route: routes[index] })}
         <BottomNavigation.Bar
           style={{

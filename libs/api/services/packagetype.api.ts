@@ -10,3 +10,10 @@ export const getPackageTypes = async () => {
   >(`${baseAPI}?branchId=null`);
   return response;
 };
+
+export const getPackageTypeses = async (branchId: number) => {
+  const { data: response } = await httpHelper.get<
+    BaseResponseType<PackageTypeDTO[]>
+  >(`${baseAPI}?branchId=${branchId}`);
+  return response;
+};

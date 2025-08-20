@@ -1,4 +1,4 @@
-import usePackageTypes from "@/libs/hooks/usePackageTypes";
+import usePackageTypeses from "@/libs/hooks/usePackageTypeses";
 import usePaymentsByUserId from "@/libs/hooks/usePaymentsByUserId";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
@@ -104,7 +104,7 @@ const Profile: React.FC = () => {
   }, []);
 
   const { paymentsByUserId } = usePaymentsByUserId(userData?.userId as string);
-  const { packagedata } = usePackageTypes(Number(userData?.branchId));
+  const { packagedata } = usePackageTypeses(Number(userData?.branchId));
   const hasPendingUpgrade = paymentsByUserId?.find(
     (x) => x.status === PaymentStatus.Pending
   )
@@ -116,7 +116,10 @@ const Profile: React.FC = () => {
       .sort((a, b) => a.price - b.price)
       .map((p) => ({
         ...p,
-        slashedPrice: p.slashedPrice ? Number(p.slashedPrice) : undefined,
+        slashedPrice:
+          p.slashedPrice !== null && p.slashedPrice !== undefined
+            ? Number(p.slashedPrice)
+            : 0,
       }));
 
     const indexOfUserPackage = availablePackages.findIndex(

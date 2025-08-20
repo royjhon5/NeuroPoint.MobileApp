@@ -25,7 +25,6 @@ export default function JoinMeeting(props: JoinMeetingProps) {
             });
 
             if (isSuccess && response) {
-              console.log(response);
             } else {
               Alert.alert("Error", "Failed to get Zoom signature.");
             }

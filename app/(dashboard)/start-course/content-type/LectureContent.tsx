@@ -1,4 +1,5 @@
 import JoinMeeting from "@/app/(dashboard)/start-course/content-type/JoinMeeting";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
@@ -13,6 +14,19 @@ interface LectureContentProps {
   };
   lessonType: string;
 }
+type Users = {
+  userId: string;
+  username: string;
+  role: string;
+  email: string;
+  branchId: number;
+  packageTypeId: number;
+  paymentStatus: number;
+  profileFeedback: string;
+  isProfileApproved: boolean;
+  packageName: string;
+  price: number;
+};
 
 const LectureContent = ({
   lessonId,
@@ -28,6 +42,28 @@ const LectureContent = ({
     meetingId: 0,
     password: "",
   });
+  const [userData, setUserData] = useState<Users | null>(null);
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("user");
+      if (value !== null) {
+        const user = JSON.parse(value);
+        return user;
+      }
+    } catch (e) {
+      console.error("Failed to fetch data from storage", e);
+    }
+  };
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getData();
+      if (user) {
+        setUserData(user);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const schedule = dayjs(zoomDetails.zoomSchedule);
   const zoomSchedule = schedule.format("MMMM D, YYYY h:mm A");
@@ -100,7 +136,7 @@ const LectureContent = ({
           {isZoomScheduleActive() && (
             <View style={{ display: "flex" }}>
               <JoinMeeting
-                name={"test"}
+                name={userData?.username || ""}
                 role={0}
                 label="Join Zoom Lecture"
                 meetingId={zoomScheduleDetails.meetingId}

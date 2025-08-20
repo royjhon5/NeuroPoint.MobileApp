@@ -5,7 +5,7 @@ export default function PrivacyPolicy() {
   return (
     <SafeAreaView
       className="flex flex-col"
-      style={{ flex: 1, paddingBottom: 50 }}
+      style={{ flex: 1, paddingBottom: 50, backgroundColor: "#FFFFFF" }}
     >
       <View className="bg-blue-500 p-6 flex flex-col">
         <Text className="text-2xl text-white">Privacy Policy</Text>

@@ -118,6 +118,7 @@ export default function CourseOverView() {
           style={{
             flex: 1,
             padding: 16,
+            backgroundColor: "#FFFFFF",
           }}
         >
           <Text
