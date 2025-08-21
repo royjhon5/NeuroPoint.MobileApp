@@ -41,23 +41,15 @@ const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
       <Dialog
         visible={visible}
         onDismiss={onDismiss}
-        style={{ maxHeight: "90%", borderRadius: 16 }}
+        style={{
+          maxHeight: "90%",
+          borderRadius: 16,
+          backgroundColor: "white",
+        }}
       >
+        <Dialog.Title>Upgrade Package</Dialog.Title>
         <Dialog.ScrollArea>
           <ScrollView contentContainerStyle={{ padding: 16, gap: 15 }}>
-            <Text
-              style={{
-                fontSize: 26,
-                fontWeight: "bold",
-                color: "#0241BE",
-                textAlign: "center",
-                marginBottom: 20,
-                marginTop: 10,
-              }}
-            >
-              Upgrade Package
-            </Text>
-
             {plans.map((plan) => (
               <Card key={plan.id}>
                 <Card.Title
@@ -104,10 +96,11 @@ const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
                     ))}
                   </View>
                 </Card.Content>
-                <Card.Actions>
+                <Card.Actions style={{ justifyContent: "center" }}>
                   <Button
                     mode="contained"
-                    style={{ marginTop: 15 }}
+                    style={{ marginTop: 5, width: "100%" }}
+                    buttonColor="blue"
                     disabled={hasPendingUpgrade}
                     onPress={() => handleUpgrade(plan)} // <-- Add this
                   >
@@ -116,12 +109,11 @@ const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
                 </Card.Actions>
               </Card>
             ))}
-
-            <Button onPress={onDismiss} style={{ marginTop: 20 }}>
-              Cancel
-            </Button>
           </ScrollView>
         </Dialog.ScrollArea>
+        <Dialog.Actions>
+          <Button onPress={onDismiss}>Cancel</Button>
+        </Dialog.Actions>
       </Dialog>
 
       {/* Render the UploadReceiptOnUpgradeDialog */}

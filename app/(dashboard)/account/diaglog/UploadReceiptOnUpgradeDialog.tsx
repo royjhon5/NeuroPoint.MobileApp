@@ -1,5 +1,7 @@
 import useUpgradePackage from "@/libs/hooks/useUpgradePackage";
+import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
 import React, { useState } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import {
@@ -8,9 +10,9 @@ import {
   Icon,
   Portal,
   Text,
+  TouchableRipple,
   useTheme,
 } from "react-native-paper";
-
 type PackageType = {
   id: number;
   name: string;
@@ -58,6 +60,27 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
       };
       setImage(imageData);
       handlePaymentReceiptChange(imageData);
+    }
+  };
+
+  const downloadAndSaveImage = async (imageUrl: any) => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access media library is required to save images!");
+        return;
+      }
+
+      const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+      const fileUri = FileSystem.documentDirectory + filename;
+
+      // Download the image
+      const { uri } = await FileSystem.downloadAsync(imageUrl, fileUri);
+      await MediaLibrary.saveToLibraryAsync(uri);
+      alert("Image saved to gallery!");
+    } catch (error) {
+      console.error("Error downloading or saving image:", error);
+      alert("Failed to download and save image.");
     }
   };
 
@@ -127,7 +150,12 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
               style={{ marginVertical: 10 }}
             >
               {/* <FileUploader onSelectFile={handlePaymentReceiptChange} /> */}
-              <Button className="w-full" mode="outlined" onPress={pickImage}>
+              <Button
+                className="w-full"
+                mode="contained"
+                buttonColor="blue"
+                onPress={pickImage}
+              >
                 Upload Receipt
               </Button>
 
@@ -141,11 +169,40 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
             </View>
 
             {/* Replace this with your actual Payment component */}
-            <View style={styles.paymentBox}>
-              {/* <Payment /> */}
-              <Text style={{ color: "white" }}>
-                Payment options placeholder
+            <View className="rounded-xl" style={styles.paymentSection}>
+              <Text className="text-white flex text-center text-2xl">
+                Payment Options
               </Text>
+              <Text className="text-white flex text-center text-1xl">
+                Click the image to download the QR code
+              </Text>
+              <View className="flex flex-row gap-5 mt-5 items-center justify-center">
+                <TouchableRipple
+                  onPress={downloadAndSaveImage.bind(
+                    null,
+                    "https://www.neuropoint.io/assets/bpi-qr-Du2OS9N9.png"
+                  )}
+                  rippleColor="rgba(0, 0, 0, .32)"
+                >
+                  <Image
+                    source={require("../../../../assets/bpi.jpg")}
+                    style={{ width: 120, height: 120, borderRadius: 12 }}
+                  />
+                </TouchableRipple>
+
+                <TouchableRipple
+                  onPress={downloadAndSaveImage.bind(
+                    null,
+                    "https://www.neuropoint.io/assets/gcash-qr-ILfuFeVR.png"
+                  )}
+                  rippleColor="rgba(0, 0, 0, .32)"
+                >
+                  <Image
+                    source={require("../../../../assets/gcash.jpg")}
+                    style={{ width: 120, height: 120, borderRadius: 12 }}
+                  />
+                </TouchableRipple>
+              </View>
             </View>
           </ScrollView>
         </Dialog.ScrollArea>
@@ -162,6 +219,8 @@ const UploadReceiptOnUpgradeDialog: React.FC<UploadReceiptOnUpgradeProps> = ({
           </Button>
           <Button
             mode="contained"
+            buttonColor="blue"
+            disabled={!image}
             onPress={() => {
               upgradePackage(plan.id);
             }}
@@ -180,9 +239,10 @@ const styles = StyleSheet.create({
   dialog: {
     maxHeight: "90%",
     borderRadius: 16,
+    backgroundColor: "white",
   },
   scrollContent: {
-    padding: 16,
+    padding: 3,
     gap: 10,
   },
   packageTitle: {
@@ -214,6 +274,11 @@ const styles = StyleSheet.create({
   },
   actions: {
     justifyContent: "space-between",
-    paddingHorizontal: 8,
+  },
+  paymentSection: {
+    flex: 1,
+    backgroundColor: "#015bef",
+    padding: 16,
+    justifyContent: "center",
   },
 });

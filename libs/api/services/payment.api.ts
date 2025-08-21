@@ -18,14 +18,17 @@ export type PaymentDto = {
   userId: string;
   isActive: boolean;
 };
-
 export const uploadPaymentReceipt = async (params: {
-  file: File;
+  file: RNFile;
   userId: string;
   studentPackageId: number;
 }) => {
   const formData = new FormData();
-  formData.append("file", params.file as any); // RN hack
+  formData.append("file", {
+    uri: params.file.uri,
+    type: "image/jpeg",
+    name: params.file.name,
+  } as any);
 
   formData.append("userId", params.userId);
   formData.append("studentPackageId", `${params.studentPackageId}`);

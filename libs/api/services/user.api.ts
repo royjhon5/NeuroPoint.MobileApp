@@ -143,22 +143,23 @@ export const upgradeCurrentPackage = async (params: {
   return response;
 };
 
-export const uploadPaymentReceipt = async (params: {
-  file: File;
-  userId: string;
-  studentPackageId: number;
-}) => {
+export const uploadProfile = async (params: { file: RNFile }) => {
   const formData = new FormData();
 
-  formData.append("file", params.file);
-
-  formData.append("userId", params.userId);
-
-  formData.append("studentPackageId", `${params.studentPackageId}`);
+  formData.append("file", {
+    uri: params.file.uri,
+    type: "image/jpeg",
+    name: params.file.name,
+  } as any);
 
   const { data: response } = await httpHelper.patch<BaseResponseType<boolean>>(
-    `${baseAPI}/uploadReceipt`,
-    formData
+    `${baseAPI}/upload-profile`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
   return response;
 };

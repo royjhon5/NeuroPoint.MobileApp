@@ -91,6 +91,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
             <StatusBar />
+
             <PaperProvider theme={paperTheme}>
               <ErrorBoundary>
                 <DrawerProvider>
@@ -98,7 +99,6 @@ export default function RootLayout() {
                     <AppBarComponent />
 
                     <Slot />
-
                     <Toast />
                     <FAB
                       icon="message"

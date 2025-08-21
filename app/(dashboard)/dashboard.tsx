@@ -1,6 +1,6 @@
 import LeaderboardPage from "@/app/(dashboard)/leaderboard/LeaderboardPage";
 import LibraryComponent from "@/app/(dashboard)/library";
-import MyCourse from "@/app/(dashboard)/my-couses/myCourse";
+import MyCourse from "@/app/(dashboard)/my-course";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";

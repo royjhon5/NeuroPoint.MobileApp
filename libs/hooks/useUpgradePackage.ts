@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -22,6 +22,7 @@ type Users = {
 };
 const useUpgradePackage = (onUpgradeSuccess?: () => void) => {
   const [userData, setUserData] = useState<Users | null>(null);
+  const queryClient = useQueryClient();
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("user");
@@ -59,6 +60,7 @@ const useUpgradePackage = (onUpgradeSuccess?: () => void) => {
           type: "success",
           text1: "Package successfully upgraded.",
         });
+        queryClient.invalidateQueries({ queryKey: ["getuserdetauls"] });
         if (onUpgradeSuccess) onUpgradeSuccess(); // close dialog here
       }
     },

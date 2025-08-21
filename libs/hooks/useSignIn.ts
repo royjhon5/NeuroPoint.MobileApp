@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ const useSignIn = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { setIsAuthenticated } = useAuth();
-
+  const queryclient = useQueryClient();
   const form = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -28,6 +28,7 @@ const useSignIn = () => {
     mutationFn: userSignIn,
     onMutate: () => setLoading(true),
     onSuccess: async (res) => {
+      queryclient.invalidateQueries({ queryKey: ["getuserdetauls"] });
       const data = res as BaseResponseType<LoginResponseDto>;
 
       if (data?.isSuccess) {

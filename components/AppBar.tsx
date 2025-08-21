@@ -1,16 +1,19 @@
 import { useAuth } from "@/context/AuthContext";
 import { useDrawer } from "@/context/DrawerContext";
+import useUserDetails from "@/libs/hooks/useUserDetails";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { Appbar, Avatar, IconButton, Menu } from "react-native-paper";
+import { Appbar, Avatar, IconButton, Menu, useTheme } from "react-native-paper";
 
 const AppBarComponent = () => {
   const { openDrawer } = useDrawer();
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [visible, setVisible] = useState(false);
   const router = useRouter();
+  const { getUserDetails } = useUserDetails();
+  const theme = useTheme();
 
   const handleAuthAction = async () => {
     if (isAuthenticated) {
@@ -28,7 +31,7 @@ const AppBarComponent = () => {
 
   return (
     <>
-      <Appbar.Header elevated>
+      <Appbar.Header style={{ backgroundColor: theme.colors.elevation.level2 }}>
         <Appbar.Content
           title={
             <View className="flex flex-row gap-1 items-center">
@@ -53,7 +56,20 @@ const AppBarComponent = () => {
                 onDismiss={closeMenu}
                 anchor={
                   <IconButton
-                    icon={() => <Avatar.Icon size={24} icon="account" />}
+                    icon={() =>
+                      getUserDetails?.isProfileApproved === true ? (
+                        <View>
+                          <Avatar.Image
+                            size={24}
+                            source={{
+                              uri: getUserDetails?.profile,
+                            }}
+                          />
+                        </View>
+                      ) : (
+                        <Avatar.Icon size={24} icon="account" />
+                      )
+                    }
                     onPress={openMenu}
                   />
                 }

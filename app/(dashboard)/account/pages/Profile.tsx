@@ -1,9 +1,9 @@
 import usePackageTypeses from "@/libs/hooks/usePackageTypeses";
 import usePaymentsByUserId from "@/libs/hooks/usePaymentsByUserId";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   ImageSourcePropType,
   ScrollView,
@@ -26,10 +26,15 @@ import {
 import UpgradeDialog from "../diaglog/UpgradeDialog";
 // import Payment from "./Payment"; // Your component
 
+import { RNFile, uploadPaymentReceipt } from "@/libs/api/services/payment.api";
+import { uploadProfile } from "@/libs/api/services/user.api";
 import useUserDetails from "@/libs/hooks/useUserDetails";
+import { useQueryClient } from "@tanstack/react-query";
 import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
+import { requestCameraPermissionsAsync } from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-
+import Toast from "react-native-toast-message";
 // Enum for Payment Status
 export enum PaymentStatus {
   Unpaid = 0,
@@ -60,23 +65,13 @@ type Users = {
 const Profile: React.FC = () => {
   const [openReceiptDialog, setOpenReceiptDialog] = useState(false);
   const [openUpgradeDialog, setOpenUpgradeDialog] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [image, setImage] = useState<any>(null);
   const { getUserDetails } = useUserDetails();
+  const queryClient = useQueryClient();
   console.log(getUserDetails);
   const theme = useTheme();
   const [userData, setUserData] = useState<Users | null>(null);
-  const handleProfilePicChange = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-    }
-  };
-
-  console.log("User Data:", userData);
-
   const getPaymentColor = (): string => {
     switch (userData?.paymentStatus) {
       case PaymentStatus.Unpaid:
@@ -145,26 +140,169 @@ const Profile: React.FC = () => {
 
   const downloadAndSaveImage = async (imageUrl: any) => {
     try {
-      // Request permissions
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         alert("Permission to access media library is required to save images!");
         return;
       }
 
-      // Define local URI for the downloaded image
       const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
       const fileUri = FileSystem.documentDirectory + filename;
 
       // Download the image
       const { uri } = await FileSystem.downloadAsync(imageUrl, fileUri);
-
-      // Save to media library
       await MediaLibrary.saveToLibraryAsync(uri);
       alert("Image saved to gallery!");
     } catch (error) {
       console.error("Error downloading or saving image:", error);
       alert("Failed to download and save image.");
+    }
+  };
+
+  const uploadProfilePicture = async (file: RNFile) => {
+    try {
+      const response = await uploadProfile({
+        file: file,
+      });
+
+      if (response.isSuccess) {
+        Toast.show({
+          type: "success",
+          text2: "Uploaded Profile success subject for approval.",
+        });
+        queryClient.invalidateQueries({ queryKey: ["getuserdetauls"] });
+      } else {
+        Toast.show({
+          type: "error",
+          text2: "Upload receipt failed. Please login and upload again.",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text2: "Error uploading payment receipt. Please ",
+      });
+    }
+  };
+
+  const openCamera = async () => {
+    const hasPermission = await requestCameraPermissionsAsync();
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const imageData: any = {
+        uri: asset.uri,
+        type: "image/jpeg",
+        name: asset.fileName || `receipt_${Date.now()}.jpg`,
+      };
+      uploadProfilePicture(imageData);
+    }
+  };
+
+  const openImageLibrary = async () => {
+    const hasPermission = await MediaLibrary.requestPermissionsAsync();
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const imageData: any = {
+        uri: asset.uri,
+        type: "image/jpeg",
+        name: asset.fileName || `receipt_${Date.now()}.jpg`,
+      };
+      uploadProfilePicture(imageData);
+    }
+  };
+
+  const showImageSourceOptions = () => {
+    Alert.alert(
+      "Add Photo",
+      "Choose how you'd like to add a photo",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Take Photo", onPress: openCamera },
+        { text: "Choose from Library", onPress: openImageLibrary },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("Permission to access media library is required!");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const imageData: any = {
+        uri: asset.uri,
+        type: "image/jpeg",
+        name: asset.fileName || `receipt_${Date.now()}.jpg`,
+      };
+      setImage(imageData);
+    }
+  };
+
+  const closeUploadReceiptDialog = () => {
+    setOpenReceiptDialog(false);
+    setImage(null);
+  };
+
+  const uploadReceiptCommand = async () => {
+    setLoading(true);
+    try {
+      const response = await uploadPaymentReceipt({
+        file: image,
+        userId: getUserDetails?.id as string,
+        studentPackageId: getUserDetails?.currentPackage
+          .studentPackageTypeId as number,
+      });
+      if (response.isSuccess) {
+        Toast.show({
+          type: "success",
+          text2: "Uploaded Profile success subject for approval.",
+        });
+        queryClient.invalidateQueries({ queryKey: ["getuserdetauls"] });
+        setLoading(false);
+      } else {
+        Toast.show({
+          type: "error",
+          text2: "Upload receipt failed. Please login and upload again.",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text2: "Error uploading payment receipt. Please ",
+      });
+    } finally {
+      setLoading(false);
+      closeUploadReceiptDialog();
     }
   };
 
@@ -176,25 +314,23 @@ const Profile: React.FC = () => {
           <View style={styles.profileSection}>
             <View style={styles.headerBg} />
             <View style={styles.profileContainer}>
-              <View style={styles.avatarWrapper}>
-                <Image
-                  source={
-                    userData?.isProfileApproved && userData?.isProfileApproved
-                      ? { uri: "test" }
-                      : ("test" as ImageSourcePropType)
-                  }
-                  style={styles.avatar}
-                />
-                <TouchableOpacity
-                  onPress={handleProfilePicChange}
-                  style={styles.uploadButton}
-                >
-                  <Text style={styles.uploadText}>📷</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity onPress={showImageSourceOptions}>
+                <View style={styles.avatarWrapper}>
+                  <Image
+                    source={
+                      getUserDetails?.isProfileApproved &&
+                      getUserDetails?.isProfileApproved
+                        ? { uri: getUserDetails?.profile || "" }
+                        : ("test" as ImageSourcePropType)
+                    }
+                    style={styles.avatar}
+                  />
 
+                  <Text style={styles.uploadText}>📷</Text>
+                </View>
+              </TouchableOpacity>
               {/* Feedback */}
-              {userData &&
+              {getUserDetails?.profile &&
                 !getUserDetails?.isProfileApproved &&
                 !getUserDetails?.profileFeedback && (
                   <View className="p-2 bg-blue-200 rounded-xl mt-2 flex flex-row items-center gap-2">
@@ -205,7 +341,7 @@ const Profile: React.FC = () => {
                     <Text>Your profile picture is subject to approval</Text>
                   </View>
                 )}
-              {userData &&
+              {getUserDetails?.profile &&
                 !getUserDetails?.isProfileApproved &&
                 getUserDetails?.profileFeedback && (
                   <HelperText type="error">
@@ -216,7 +352,7 @@ const Profile: React.FC = () => {
               <Text className="text-3xl font-bold mt-5">
                 {userData?.username?.toUpperCase()}
               </Text>
-              <Text style={styles.email}>{userData?.email}</Text>
+              <Text style={styles.email}>{getUserDetails?.email}</Text>
 
               <View className="mb-4 mt-4 w-full">
                 <Divider />
@@ -225,9 +361,11 @@ const Profile: React.FC = () => {
               <Text>
                 Payment Status:{" "}
                 <Text style={{ color: getPaymentColor(), fontWeight: "bold" }}>
-                  {userData?.paymentStatus === PaymentStatus.Unpaid
+                  {getUserDetails?.currentPackage.paymentStatus ===
+                  PaymentStatus.Unpaid
                     ? "Unpaid"
-                    : userData?.paymentStatus === PaymentStatus.Pending
+                    : getUserDetails?.currentPackage.paymentStatus ===
+                      PaymentStatus.Pending
                     ? "Pending"
                     : "Paid"}
                 </Text>
@@ -241,7 +379,8 @@ const Profile: React.FC = () => {
               </View>
 
               <View style={{ marginTop: 20 }}>
-                {userData?.paymentStatus !== PaymentStatus.Paid && (
+                {getUserDetails?.currentPackage.paymentStatus !==
+                  PaymentStatus.Paid && (
                   <Button
                     icon="upload"
                     mode="contained"
@@ -252,14 +391,15 @@ const Profile: React.FC = () => {
                   </Button>
                 )}
 
-                {userData?.paymentStatus === PaymentStatus.Paid &&
+                {getUserDetails?.currentPackage.paymentStatus ===
+                  PaymentStatus.Paid &&
                   availablePlans().length > 0 && (
                     <Button
                       icon="arrow-up-bold"
-                      mode="outlined"
+                      mode="contained"
                       disabled={hasPendingUpgrade}
                       onPress={() => setOpenUpgradeDialog(true)}
-                      style={styles.button}
+                      buttonColor="blue"
                     >
                       {hasPendingUpgrade
                         ? "Pending Upgrade"
@@ -317,10 +457,31 @@ const Profile: React.FC = () => {
         >
           <Dialog.Title>Upload Receipt</Dialog.Title>
           <Dialog.Content>
-            <Text>Insert upload form here</Text>
+            <View className="p-10 border border-dashed flex flex-col items-center">
+              {image && (
+                <Image
+                  className="w-full"
+                  source={{ uri: image.uri }}
+                  style={{ width: 250, height: 250, marginVertical: 10 }}
+                />
+              )}
+              <Button mode="contained" buttonColor="blue" onPress={pickImage}>
+                {image ? "Change Receipt" : "Upload Receipt"}
+              </Button>
+            </View>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setOpenReceiptDialog(false)}>Close</Button>
+            <View className="flex flex-row gap-5 items-center justify-between w-full">
+              <Button onPress={closeUploadReceiptDialog}>Cancel</Button>
+              <Button
+                mode="contained"
+                buttonColor="blue"
+                disabled={!image}
+                onPress={uploadReceiptCommand}
+              >
+                {isLoading ? "Uploading..." : "Upload"}
+              </Button>
+            </View>
           </Dialog.Actions>
         </Dialog>
 
@@ -427,6 +588,7 @@ const styles = StyleSheet.create({
     marginTop: 7,
     borderRadius: 12,
     backgroundColor: "blue",
+    color: "white",
   },
   dialog: {
     maxHeight: "90%",
