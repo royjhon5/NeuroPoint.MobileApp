@@ -66,6 +66,7 @@ export default function Dashboard() {
             right: 0,
             bottom: inset.bottom,
             height: 70,
+            backgroundColor: "white",
           }}
           navigationState={{ index, routes }}
           onTabPress={({ route }: { route: MyRoute }) => {
@@ -75,7 +76,7 @@ export default function Dashboard() {
             }
           }}
           renderIcon={({ route, color }: { route: MyRoute; color: string }) => (
-            <Icon source={route.icon} size={24} color={color} />
+            <Icon source={route.icon} size={25} color={color} />
           )}
           getLabelText={({ route }: { route: MyRoute }) => route.title}
         />

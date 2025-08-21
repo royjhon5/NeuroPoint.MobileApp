@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Badge, Card, Icon, Text, TextInput } from "react-native-paper";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Badge, Card, Icon, TextInput } from "react-native-paper";
 import useGetPublished from "../../../libs/hooks/useGetPublished";
 
 export default function CoursesComponent() {
@@ -13,67 +13,63 @@ export default function CoursesComponent() {
   );
 
   return (
-    <>
+    <SafeAreaView className="flex flex-col items center p-3  w-full h-full bg-[#FFFFFF]">
       <View style={styles.container}>
-        <Text variant="headlineMedium" style={styles.courseTitle}>
-          Courses
-        </Text>
+        <Text className="text-3xl mb-2">Courses</Text>
         <TextInput
           mode="outlined"
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
           right={<TextInput.Icon icon="magnify" />}
           placeholder="Search"
+          style={{ height: 40 }}
         />
+        <ScrollView contentContainerStyle={{ paddingBottom: 180 }}>
+          {filteredCourses.length > 0 ? (
+            filteredCourses.map((published: any) => (
+              <Card
+                key={published.id}
+                style={styles.cardContainer}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(dashboard)/course-overview",
+                    params: { id: published.id },
+                  })
+                }
+              >
+                <Card.Cover source={{ uri: published.thumbnailUrl }} />
+                <Card.Content>
+                  <View style={styles.cardContainerView}>
+                    <Text className="font-bold text-2xl">{published.name}</Text>
+                  </View>
+                  <View style={styles.cardContainerView}>
+                    <View style={styles.viewContainer}>
+                      <Icon source="school" size={20} />
+                      <Text>Total Lesson:</Text>
+                      <Text>{published.totalLesson}</Text>
+                    </View>
+                    <View style={styles.viewContainer}>
+                      <Icon source="book-open-variant" size={20} />
+                      <Text>Total Topics:</Text>
+                      <Text>{published.totalTopics}</Text>
+                    </View>
+                    <View style={styles.viewContainer}>
+                      <Badge style={styles.badgeStyle} size={28}>
+                        Paid
+                      </Badge>
+                    </View>
+                  </View>
+                </Card.Content>
+              </Card>
+            ))
+          ) : (
+            <View style={styles.noCoursesContainer}>
+              <Text style={styles.noCoursesText}>No Courses Available</Text>
+            </View>
+          )}
+        </ScrollView>
       </View>
-
-      <ScrollView style={styles.container}>
-        {filteredCourses.length > 0 ? (
-          filteredCourses.map((published: any) => (
-            <Card
-              key={published.id}
-              style={styles.cardContainer}
-              onPress={() =>
-                router.push({
-                  pathname: "/(dashboard)/course-overview",
-                  params: { id: published.id },
-                })
-              }
-            >
-              <Card.Cover source={{ uri: published.thumbnailUrl }} />
-              <Card.Content>
-                <View style={styles.cardContainerView}>
-                  <Text variant="titleMedium">{published.name}</Text>
-                </View>
-                <View style={styles.cardContainerView}>
-                  <View style={styles.viewContainer}>
-                    <Icon source="school" size={20} />
-                    <Text variant="labelMedium">Total Lesson:</Text>
-                    <Text>{published.totalLesson}</Text>
-                  </View>
-                  <View style={styles.viewContainer}>
-                    <Icon source="book-open-variant" size={20} />
-                    <Text variant="labelMedium">Total Topics:</Text>
-                    <Text>{published.totalTopics}</Text>
-                  </View>
-                  <View style={styles.viewContainer}>
-                    <Badge style={styles.badgeStyle} size={28}>
-                      Paid
-                    </Badge>
-                  </View>
-                </View>
-              </Card.Content>
-            </Card>
-          ))
-        ) : (
-          <View style={styles.noCoursesContainer}>
-            <Text variant="bodyLarge" style={styles.noCoursesText}>
-              No Courses Available
-            </Text>
-          </View>
-        )}
-      </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
@@ -83,18 +79,17 @@ const styles = StyleSheet.create({
   },
   container: {
     width: "100%",
-    padding: 10,
-    backgroundColor: "#FFFFFF",
+    bottom: 0, // Add some bottom padding
   },
   courseTitle: {
     marginBottom: 5,
   },
   cardContainer: {
-    padding: 10,
+    padding: 0,
     marginTop: 10,
   },
   cardContainerView: {
-    padding: 15,
+    padding: 5,
   },
   viewContainer: {
     display: "flex",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { BottomNavigation, Icon, Provider } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChangePassword from "./pages/ChangePassword";
 import Profile from "./pages/Profile";
 type MyRoute = {
@@ -11,10 +12,10 @@ type MyRoute = {
 
 export default function Account() {
   const [index, setIndex] = useState<number>(0);
-
+  const inset = useSafeAreaInsets();
   const routes: MyRoute[] = [
-    { key: "myprofile", title: "My Courses", icon: "view-agenda" },
-    { key: "changepassword", title: "Change Password", icon: "account" },
+    { key: "myprofile", title: "Profile", icon: "account" },
+    { key: "changepassword", title: "Change Password", icon: "key" },
   ];
 
   const renderScene = ({ route }: { route: MyRoute }) => {
@@ -37,7 +38,9 @@ export default function Account() {
             position: "absolute",
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: inset.bottom,
+            height: 70,
+            backgroundColor: "white",
           }}
           navigationState={{ index, routes }}
           onTabPress={({ route }: { route: MyRoute }) => {

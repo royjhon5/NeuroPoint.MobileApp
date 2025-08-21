@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -19,7 +20,6 @@ import {
   Text,
 } from "react-native-paper";
 import HTML from "react-native-render-html";
-import { SafeAreaView } from "react-native-safe-area-context";
 import useGetAnnouncement from "../../../libs/hooks/useGetAnnouncement";
 import useGetEnrollment from "../../../libs/hooks/useGetEnrollment";
 

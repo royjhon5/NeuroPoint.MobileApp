@@ -63,10 +63,7 @@ export default function RootLayout() {
       };
     } else if (pathname.startsWith("/account")) {
       return {
-        position: "absolute",
-        bottom: 90 + inset.bottom,
-        right: 16,
-        borderRadius: 50,
+        display: "none",
       };
     }
     return {

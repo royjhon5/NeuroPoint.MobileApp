@@ -8,6 +8,7 @@ import {
   ImageSourcePropType,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -18,7 +19,6 @@ import {
   Divider,
   HelperText,
   Portal,
-  Text,
   useTheme,
 } from "react-native-paper";
 import UpgradeDialog from "../diaglog/UpgradeDialog";
@@ -174,16 +174,14 @@ const Profile: React.FC = () => {
                   </HelperText>
                 )}
 
-              <Text variant="titleLarge" style={styles.username}>
+              <Text style={styles.username}>
                 {userData?.username?.toUpperCase()}
               </Text>
-              <Text variant="bodyMedium" style={styles.email}>
-                {userData?.email}
-              </Text>
+              <Text style={styles.email}>{userData?.email}</Text>
 
               <Divider style={{ marginVertical: 12 }} />
 
-              <Text variant="titleMedium">
+              <Text>
                 Payment Status:{" "}
                 <Text style={{ color: getPaymentColor(), fontWeight: "bold" }}>
                   {userData?.paymentStatus === PaymentStatus.Unpaid
@@ -232,7 +230,11 @@ const Profile: React.FC = () => {
           </View>
 
           {/* Payment Info */}
-          <View style={styles.paymentSection}>{/* <Payment /> */}</View>
+          <View style={styles.paymentSection}>
+            <Text className="text-white flex text-center text-2xl">
+              Payment Options
+            </Text>
+          </View>
         </View>
       </Card>
 

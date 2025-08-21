@@ -95,10 +95,11 @@ export default function LibraryComponent() {
           onChangeText={(text) => setSearchQuery(text)}
           right={<TextInput.Icon icon="magnify" />}
           placeholder="Search"
-          style={{ height: 40 }}
+          style={{ height: 35 }}
         />
         <SegmentedButtons
           style={styles.segmentedBtns}
+          density="medium"
           value={value}
           onValueChange={setValue}
           buttons={[
@@ -115,7 +116,7 @@ export default function LibraryComponent() {
         />
       </View>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
         style={styles.container}
       >
         {filteredData.length > 0 ? (
@@ -245,6 +246,7 @@ const styles = StyleSheet.create({
   },
   segmentedBtns: {
     marginTop: 10,
+    borderColor: "blue",
   },
   video: {
     width: "100%",
