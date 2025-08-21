@@ -80,7 +80,9 @@ export default function MyCourse() {
         </Button>
 
         {isLoading ? (
-          <ActivityIndicator animating={true} />
+          <View className="flex flex-col gap-2 items-center justify-center h-80">
+            <ActivityIndicator animating={true} color="blue" size="large" />
+          </View>
         ) : (
           enrollmentdata.map((enroll: any) => {
             const total = enroll.totalLesson ?? 0;

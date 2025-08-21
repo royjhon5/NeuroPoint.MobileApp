@@ -256,15 +256,21 @@ export default function StartCourse() {
         }}
       >
         <View>
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: "bold",
+              display: "flex",
+              textAlign: "center",
+            }}
+          >
             Welcome to the course! 👋
           </Text>
         </View>
         <ScrollView>
-          <List.Section title="Course Curriculum">
+          <List.Section>
             {isPending ? (
-              <View className="flex flex-col gap-2">
-                <Text>Fetching courses ...</Text>
+              <View className="flex flex-col gap-2 items-center justify-center h-80">
                 <ActivityIndicator animating={true} color="blue" size="large" />
               </View>
             ) : (

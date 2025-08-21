@@ -21,6 +21,7 @@
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "@tanstack/react-query": "^5.84.1",
+    "@zoom/meetingsdk-react-native": "^6.4.10",
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
     "eas": "^0.1.0",
