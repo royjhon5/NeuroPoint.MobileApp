@@ -38,11 +38,11 @@ export type LoginResponseDto = {
   email: string;
   roles: string[];
   phoneNumber: string;
+  packageName: string;
   branchId: number;
   currentPackage: {
     studentPackageTypeId: number;
     paymentStatus: number;
-    packageName: string;
     partnerId: number;
     price: number;
     packageTypeId: number;

@@ -40,16 +40,12 @@ const useSignIn = () => {
           lastName,
           branchId,
           currentPackage,
+          packageName,
           isProfileApproved,
           profileFeedback,
         } = data.response;
-        const {
-          packageTypeId,
-          paymentStatus,
-          packageName,
-          price,
-          studentPackageTypeId,
-        } = currentPackage;
+        const { packageTypeId, paymentStatus, price, studentPackageTypeId } =
+          currentPackage;
         await AsyncStorage.multiSet([
           ["userid", userId],
           ["token", token],
@@ -63,9 +59,9 @@ const useSignIn = () => {
               branchId: branchId,
               packageTypeId: packageTypeId,
               paymentStatus: paymentStatus,
+              packageName: packageName,
               isProfileApproved,
               profileFeedback,
-              packageName,
               price,
               studentPackageTypeId,
             }),
@@ -77,7 +73,7 @@ const useSignIn = () => {
         Toast.show({
           type: "success",
           text1: "Login Successful",
-          text2: `Welcome, ${firstName} ${lastName} ${packageName}`,
+          text2: `Welcome, ${firstName} ${lastName}`,
         });
 
         router.replace("/dashboard");

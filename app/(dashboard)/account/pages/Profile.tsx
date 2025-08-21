@@ -18,11 +18,17 @@ import {
   Dialog,
   Divider,
   HelperText,
+  Icon,
   Portal,
+  TouchableRipple,
   useTheme,
 } from "react-native-paper";
 import UpgradeDialog from "../diaglog/UpgradeDialog";
 // import Payment from "./Payment"; // Your component
+
+import useUserDetails from "@/libs/hooks/useUserDetails";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 
 // Enum for Payment Status
 export enum PaymentStatus {
@@ -54,6 +60,8 @@ type Users = {
 const Profile: React.FC = () => {
   const [openReceiptDialog, setOpenReceiptDialog] = useState(false);
   const [openUpgradeDialog, setOpenUpgradeDialog] = useState(false);
+  const { getUserDetails } = useUserDetails();
+  console.log(getUserDetails);
   const theme = useTheme();
   const [userData, setUserData] = useState<Users | null>(null);
   const handleProfilePicChange = async () => {
@@ -66,6 +74,8 @@ const Profile: React.FC = () => {
       const uri = result.assets[0].uri;
     }
   };
+
+  console.log("User Data:", userData);
 
   const getPaymentColor = (): string => {
     switch (userData?.paymentStatus) {
@@ -133,6 +143,31 @@ const Profile: React.FC = () => {
     return availablePackages;
   };
 
+  const downloadAndSaveImage = async (imageUrl: any) => {
+    try {
+      // Request permissions
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access media library is required to save images!");
+        return;
+      }
+
+      // Define local URI for the downloaded image
+      const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+      const fileUri = FileSystem.documentDirectory + filename;
+
+      // Download the image
+      const { uri } = await FileSystem.downloadAsync(imageUrl, fileUri);
+
+      // Save to media library
+      await MediaLibrary.saveToLibraryAsync(uri);
+      alert("Image saved to gallery!");
+    } catch (error) {
+      console.error("Error downloading or saving image:", error);
+      alert("Failed to download and save image.");
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Card style={styles.card}>
@@ -145,8 +180,8 @@ const Profile: React.FC = () => {
                 <Image
                   source={
                     userData?.isProfileApproved && userData?.isProfileApproved
-                      ? { uri: "fuck" }
-                      : ("fuck" as ImageSourcePropType)
+                      ? { uri: "test" }
+                      : ("test" as ImageSourcePropType)
                   }
                   style={styles.avatar}
                 />
@@ -160,26 +195,32 @@ const Profile: React.FC = () => {
 
               {/* Feedback */}
               {userData &&
-                !userData?.isProfileApproved &&
-                !userData?.profileFeedback && (
-                  <HelperText type="info" style={{ marginTop: 15 }}>
-                    Your profile picture is subject to approval
-                  </HelperText>
+                !getUserDetails?.isProfileApproved &&
+                !getUserDetails?.profileFeedback && (
+                  <View className="p-2 bg-blue-200 rounded-xl mt-2 flex flex-row items-center gap-2">
+                    <Icon
+                      source="information-variant-circle-outline"
+                      size={18}
+                    />
+                    <Text>Your profile picture is subject to approval</Text>
+                  </View>
                 )}
               {userData &&
-                !userData?.isProfileApproved &&
-                userData?.profileFeedback && (
+                !getUserDetails?.isProfileApproved &&
+                getUserDetails?.profileFeedback && (
                   <HelperText type="error">
-                    {userData?.profileFeedback}
+                    {getUserDetails?.profileFeedback}
                   </HelperText>
                 )}
 
-              <Text style={styles.username}>
+              <Text className="text-3xl font-bold mt-5">
                 {userData?.username?.toUpperCase()}
               </Text>
               <Text style={styles.email}>{userData?.email}</Text>
 
-              <Divider style={{ marginVertical: 12 }} />
+              <View className="mb-4 mt-4 w-full">
+                <Divider />
+              </View>
 
               <Text>
                 Payment Status:{" "}
@@ -194,7 +235,7 @@ const Profile: React.FC = () => {
 
               <View style={styles.packageBox}>
                 <Text style={styles.packageText}>
-                  {userData?.packageName} |{" "}
+                  {getUserDetails?.currentPackage.packageName} |{" "}
                   {formatPrice(Number(userData?.price))}
                 </Text>
               </View>
@@ -234,6 +275,36 @@ const Profile: React.FC = () => {
             <Text className="text-white flex text-center text-2xl">
               Payment Options
             </Text>
+            <Text className="text-white flex text-center text-1xl">
+              Click the image to download the QR code
+            </Text>
+            <View className="flex flex-row gap-5 mt-5 items-center justify-center">
+              <TouchableRipple
+                onPress={downloadAndSaveImage.bind(
+                  null,
+                  "https://www.neuropoint.io/assets/bpi-qr-Du2OS9N9.png"
+                )}
+                rippleColor="rgba(0, 0, 0, .32)"
+              >
+                <Image
+                  source={require("../../../../assets/bpi.jpg")}
+                  style={{ width: 120, height: 120, borderRadius: 12 }}
+                />
+              </TouchableRipple>
+
+              <TouchableRipple
+                onPress={downloadAndSaveImage.bind(
+                  null,
+                  "https://www.neuropoint.io/assets/gcash-qr-ILfuFeVR.png"
+                )}
+                rippleColor="rgba(0, 0, 0, .32)"
+              >
+                <Image
+                  source={require("../../../../assets/gcash.jpg")}
+                  style={{ width: 120, height: 120, borderRadius: 12 }}
+                />
+              </TouchableRipple>
+            </View>
           </View>
         </View>
       </Card>
@@ -336,7 +407,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   packageBox: {
-    marginTop: 12,
+    marginTop: 7,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 16,
@@ -353,8 +424,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    marginTop: 10,
+    marginTop: 7,
     borderRadius: 12,
+    backgroundColor: "blue",
   },
   dialog: {
     maxHeight: "90%",
