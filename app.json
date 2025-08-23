@@ -22,12 +22,15 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "INTERNET",
-        "CAMERA",
-        "RECORD_AUDIO",
-        "MODIFY_AUDIO_SETTINGS",
-        "WAKE_LOCK",
-        "FOREGROUND_SERVICE"
+        "android.permission.INTERNET",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.WAKE_LOCK",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.royjhon5.NeuropointMobileApp"
@@ -74,7 +77,10 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "eas": {
+        "projectId": "21d1dc3b-3fe6-4aa6-b5fe-ecfed23cb200"
+      }
     }
   }
 }
