@@ -3,8 +3,8 @@ import { PackageTypeDTO } from "@/types/DTO/PackageTypeDTO";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, Card, IconButton, Text } from "react-native-paper";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Button, IconButton } from "react-native-paper";
 
 type ReviewSignUpProps = {
   onBack?: () => void;
@@ -20,7 +20,6 @@ const PackageSelection = (props: ReviewSignUpProps) => {
   const router = useRouter();
   const { formData } = useLocalSearchParams();
   const userDetails = JSON.parse(formData as string);
-  console.log(userDetails);
 
   const scroll = (offset: number) => {
     scrollRef.current?.scrollTo({
@@ -40,12 +39,11 @@ const PackageSelection = (props: ReviewSignUpProps) => {
       },
     });
   };
-
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* Title */}
       <Text
-        variant="headlineLarge"
+        className="text-4xl font-bold"
         style={{
           textAlign: "center",
           marginVertical: 20,
@@ -57,7 +55,10 @@ const PackageSelection = (props: ReviewSignUpProps) => {
       </Text>
 
       {/* Scrollable Packages */}
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View
+        className="w-full"
+        style={{ flexDirection: "row", alignItems: "center" }}
+      >
         <IconButton
           icon="chevron-left"
           mode="contained"
@@ -74,15 +75,11 @@ const PackageSelection = (props: ReviewSignUpProps) => {
           showsHorizontalScrollIndicator={false}
         >
           {(packagedata ?? []).map((plan) => (
-            <Card
-              key={plan.id}
-              style={styles.card}
-              onPress={() => props.onSelectPackageType(plan.id)}
-            >
+            <View key={plan.id} style={styles.card} className="shadow-xl">
               {/* Header */}
-              <View style={styles.header}>
-                <View style={{ flexDirection: "row", alignItems: "center" }} />
-                <View style={{ flexDirection: "row" }}>
+              <View className="p-5 flex flex-row items-center justify-between bg-[#1f44ff]">
+                <Text className="text-white text-2xl">{plan.name}</Text>
+                <View className="flex flex-row items-center">
                   {[...Array(5)].map((_, i) => (
                     <MaterialIcons
                       key={i}
@@ -93,70 +90,23 @@ const PackageSelection = (props: ReviewSignUpProps) => {
                   ))}
                 </View>
               </View>
-
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "700",
-                  color: "white",
-                  textAlign: "center",
-                  textTransform: "uppercase",
-                }}
-              >
-                {plan.name}
-              </Text>
-
-              {/* Price */}
-              <View style={{ padding: 16, backgroundColor: "#fff" }}>
-                <Text
-                  style={{
-                    fontSize: 28,
-                    fontWeight: "800",
-                    color: "black",
-                    textAlign: "center",
-                  }}
-                >
-                  ₱{plan.price}
-                </Text>
-
-                {plan.slashedPrice && (
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      textDecorationLine: "line-through",
-                      color: "red",
-                      marginBottom: 4,
-                    }}
-                  >
+              <View className="px-5 sm:px-6 py-6 sm:py-8">
+                <View className="mb-5 sm:mb-6"></View>
+                <View className="flex">
+                  <Text className="bg-[#1F44FF] text-white font-bold text-lg sm:text-2xl py-2.5 sm:py-3 px-6 sm:px-8 rounded-l-full flex ml-auto mb-2 -mr-4 sm:-mr-6">
+                    {plan.discountPercentage}% Off
+                  </Text>
+                </View>
+                <View className="space-y-1 flex flex-col">
+                  <Text className="text-[#CC3023] line-through text-base sm:text-lg text-start">
                     ₱{Number(plan.slashedPrice)}
                   </Text>
-                )}
-
-                {/* Description */}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: "#666",
-                    textAlign: "center",
-                    marginVertical: 8,
-                  }}
-                  numberOfLines={3}
-                >
-                  {plan.description}
-                </Text>
-
-                {/* Get Started */}
-                <Button
-                  mode="contained"
-                  onPress={() => handleChoosePlan(plan)}
-                  style={{ borderRadius: 12, backgroundColor: "blue" }}
-                  contentStyle={{ paddingVertical: 6 }}
-                >
-                  Choose Plan
-                </Button>
-
-                {/* Features */}
-                <View style={{ marginTop: 12 }}>
+                  <View className="flex flex-row items-center gap-2">
+                    <Text className="text-5xl font-bold text-[#1F44FF]">
+                      ₱{plan.price}
+                    </Text>
+                    <Text className="text-sm">Monthly</Text>
+                  </View>
                   {plan.features?.map((feature: any, idx: any) => (
                     <View
                       key={idx}
@@ -167,9 +117,9 @@ const PackageSelection = (props: ReviewSignUpProps) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name="check"
-                        size={18}
-                        color="#4CAF50"
+                        name="circle"
+                        size={12}
+                        color="#1F44FF"
                       />
                       <Text style={{ marginLeft: 8, color: "#000" }}>
                         {feature.name}
@@ -178,7 +128,17 @@ const PackageSelection = (props: ReviewSignUpProps) => {
                   ))}
                 </View>
               </View>
-            </Card>
+              <View className="p-2">
+                <Button
+                  mode="contained"
+                  onPress={() => handleChoosePlan(plan)}
+                  style={{ borderRadius: 12, backgroundColor: "blue" }}
+                  contentStyle={{ paddingVertical: 6 }}
+                >
+                  Choose Plan
+                </Button>
+              </View>
+            </View>
           ))}
         </ScrollView>
 
@@ -201,7 +161,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "#00327C",
+    backgroundColor: "white",
   },
   header: {
     backgroundColor: "#00327C",

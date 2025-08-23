@@ -69,7 +69,6 @@ const Profile: React.FC = () => {
   const [image, setImage] = useState<any>(null);
   const { getUserDetails } = useUserDetails();
   const queryClient = useQueryClient();
-  console.log(getUserDetails);
   const theme = useTheme();
   const [userData, setUserData] = useState<Users | null>(null);
   const getPaymentColor = (): string => {

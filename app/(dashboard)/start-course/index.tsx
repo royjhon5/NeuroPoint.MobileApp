@@ -279,6 +279,7 @@ export default function StartCourse() {
                   key={`curriculum-${curriculumItem.id}`}
                   title={curriculumItem.name}
                   onPress={() => setSelectedCourseId(curriculumItem.courseId)}
+                  style={{ borderRadius: 10 }}
                 >
                   {curriculumItem.topics?.map((topic: any, topicIndex: any) => (
                     <List.Accordion
@@ -287,6 +288,7 @@ export default function StartCourse() {
                         <View
                           style={{
                             display: "flex",
+                            flexWrap: "wrap",
                             flexDirection: "row",
                             gap: 15,
                           }}
@@ -317,6 +319,7 @@ export default function StartCourse() {
                                 : () => showLessonModal(lesson)
                             }
                             style={{
+                              padding: 10,
                               backgroundColor:
                                 lesson.id === lessonId
                                   ? "#eceeff"

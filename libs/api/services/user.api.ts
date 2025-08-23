@@ -59,8 +59,17 @@ export const getAllUsers = async () => {
 };
 
 export const getUserRoles = async () => {
-  const { data: response } = await httpHelper.get(`${baseAPI}/user-roles`);
-  return response;
+  try {
+    const { data: response } = await httpHelper.get(`${baseAPI}/user-roles`);
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error in getUserRoles:", error.message);
+    } else {
+      console.error("Error in getUserRoles:", error);
+    }
+    throw error; // Re-throw to let react-query handle it
+  }
 };
 
 export const getAllUsersBro = async (params: {

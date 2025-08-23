@@ -1,4 +1,5 @@
 import httpHelper from "@/libs/api/httpAxios";
+import useUserDetails from "@/libs/hooks/useUserDetails";
 import { useState } from "react";
 import {
   FlatList,
@@ -6,11 +7,10 @@ import {
   Platform,
   SafeAreaView,
   StyleSheet,
-  TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import HTML from "react-native-render-html";
 
 export default function ChatScreen() {
@@ -19,7 +19,7 @@ export default function ChatScreen() {
   ]);
   const { width } = useWindowDimensions();
   const [input, setInput] = useState("");
-
+  const { getUserDetails } = useUserDetails();
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -73,10 +73,21 @@ export default function ChatScreen() {
         >
           {messages.length === 0 ||
           (messages.length === 1 && messages[0].sender === "bot") ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>How can I help you today?</Text>
-              <Text style={styles.emptySubText}>Start a new message...</Text>
-            </View>
+            getUserDetails?.currentPackage.paymentStatus === 0 ? (
+              <View style={styles.emptyState}>
+                <View className="w-full flex items-center justify-center p-4 bg-yellow-100 rounded-md my-4">
+                  <Text>
+                    ⚠️ Payment verification pending. Please wait for admin
+                    approval.
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>How can I help you today?</Text>
+                <Text style={styles.emptySubText}>Start a new message...</Text>
+              </View>
+            )
           ) : (
             <FlatList
               inverted
@@ -112,13 +123,27 @@ export default function ChatScreen() {
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
+              disabled={
+                getUserDetails?.currentPackage.paymentStatus === 0
+                  ? true
+                  : false
+              }
               placeholder="Type your message"
               value={input}
               onChangeText={setInput}
             />
-            <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-              <Text style={{ color: "#fff" }}>Send</Text>
-            </TouchableOpacity>
+            <Button
+              mode="contained"
+              color="blue"
+              disabled={
+                getUserDetails?.currentPackage.paymentStatus === 0
+                  ? true
+                  : false
+              }
+              onPress={handleSend}
+            >
+              Send
+            </Button>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

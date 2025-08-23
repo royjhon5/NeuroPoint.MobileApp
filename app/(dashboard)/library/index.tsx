@@ -1,5 +1,6 @@
+import useUserDetails from "@/libs/hooks/useUserDetails";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dimensions,
   SafeAreaView,
@@ -31,7 +32,7 @@ export default function LibraryComponent() {
     url: string;
     type: string;
   }>(null);
-
+  const [videoSource, setVideoSource] = useState<string>("");
   const handleCardPress = (item: any) => {
     setSelectedItem({ url: item.url, type: item.type });
     if (item.type === "video") {
@@ -39,6 +40,7 @@ export default function LibraryComponent() {
     }
     setVisible(true);
   };
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const screenHeight = Dimensions.get("window").height;
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,11 +80,23 @@ export default function LibraryComponent() {
   };
 
   const filteredData = getFilteredData();
-  const [videoSource, setVideoSource] = useState<string | null>(null);
+
   const player = useVideoPlayer(videoSource ?? "", (player) => {
     player.loop = true;
     player.play();
+    setIsLoading(false);
   });
+
+  useEffect(() => {
+    if (
+      Array.isArray(videopackagedata) ||
+      Array.isArray(ebookbypackage) ||
+      Array.isArray(handoutbypackage)
+    ) {
+      setIsLoadingData(false);
+    }
+  }, [videopackagedata, ebookbypackage, handoutbypackage]);
+  const { getUserDetails } = useUserDetails();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -115,91 +129,109 @@ export default function LibraryComponent() {
           ]}
         />
       </View>
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
-        style={styles.container}
-      >
-        {filteredData.length > 0 ? (
-          filteredData.map((item, index) => (
-            <Card
-              key={item.id}
-              style={styles.cardContainer}
-              onPress={() => handleCardPress(item)}
-            >
-              <Card.Cover source={{ uri: item.thumbnails || item.thumbnail }} />
-              <Card.Content>
-                <Text variant="titleMedium">{item.name}</Text>
-                <Text variant="bodySmall">{item.type.toUpperCase()}</Text>
-              </Card.Content>
-            </Card>
-          ))
-        ) : (
-          <View style={styles.noCoursesContainer}>
-            <Text variant="bodyLarge" style={styles.noCoursesText}>
-              No Content Available
+      {getUserDetails?.currentPackage.paymentStatus === 0 ? (
+        <View style={styles.container}>
+          <View className="w-full flex items-center justify-center p-4 bg-yellow-100 rounded-md my-4">
+            <Text>
+              ⚠️ Payment verification pending. Please wait for admin approval.
             </Text>
           </View>
-        )}
-        <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={() => {
-              setVisible(false);
-              setSelectedItem(null);
-              setIsLoading(true);
-              setVideoSource(null);
-            }}
-            contentContainerStyle={{
-              backgroundColor: "white",
-              height: screenHeight * 0.7,
-              borderRadius: 10,
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            {isLoading && (
-              <View
-                style={{
-                  ...StyleSheet.absoluteFillObject,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "white", // optional if you want a white loader bg
-                  zIndex: 2,
-                }}
+        </View>
+      ) : isLoadingData ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator animating={true} color="blue" size="large" />
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
+          style={styles.container}
+        >
+          {filteredData.length > 0 ? (
+            filteredData.map((item, index) => (
+              <Card
+                key={item.id}
+                style={styles.cardContainer}
+                onPress={() => handleCardPress(item)}
               >
-                <ActivityIndicator animating={true} size="large" />
-              </View>
-            )}
+                <Card.Cover
+                  source={{ uri: item.thumbnails || item.thumbnail }}
+                />
+                <Card.Content>
+                  <Text variant="titleMedium">{item.name}</Text>
+                  <Text variant="bodySmall">{item.type.toUpperCase()}</Text>
+                </Card.Content>
+              </Card>
+            ))
+          ) : (
+            <View style={styles.noCoursesContainer}>
+              <Text variant="bodyLarge" style={styles.noCoursesText}>
+                No Content Available
+              </Text>
+            </View>
+          )}
+          <Portal>
+            <Modal
+              visible={visible}
+              onDismiss={() => {
+                setVisible(false);
+                setSelectedItem(null);
+                setIsLoading(true);
+                setVideoSource("");
+              }}
+              contentContainerStyle={{
+                backgroundColor: "white",
+                height: screenHeight * 0.7,
+                borderRadius: 10,
+                overflow: "hidden",
+                position: "relative",
+              }}
+            >
+              {isLoading && (
+                <View
+                  style={{
+                    ...StyleSheet.absoluteFillObject,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white", // optional if you want a white loader bg
+                    zIndex: 2,
+                  }}
+                >
+                  <ActivityIndicator animating={true} size="large" />
+                </View>
+              )}
 
-            {selectedItem?.type === "video" && player && (
-              <VideoView
-                style={styles.video}
-                player={player}
-                allowsFullscreen
-                allowsPictureInPicture
-              />
-            )}
+              {selectedItem?.type === "video" && (
+                <VideoView
+                  style={styles.video}
+                  player={player}
+                  allowsFullscreen
+                  allowsPictureInPicture
+                />
+              )}
 
-            {(selectedItem?.type === "ebook" ||
-              selectedItem?.type === "handout") && (
-              <WebView
-                source={{
-                  uri: `https://docs.google.com/viewer?url=${encodeURIComponent(
-                    selectedItem.url
-                  )}&embedded=true`,
-                }}
-                originWhitelist={["*"]}
-                onLoadStart={() => setIsLoading(true)}
-                onLoadEnd={() => setIsLoading(false)}
-                style={{
-                  flex: 1,
-                  opacity: isLoading ? 0 : 1,
-                }}
-              />
-            )}
-          </Modal>
-        </Portal>
-      </ScrollView>
+              {(selectedItem?.type === "ebook" ||
+                selectedItem?.type === "handout") && (
+                <WebView
+                  source={{
+                    uri: `https://docs.google.com/viewer?url=${encodeURIComponent(
+                      selectedItem.url
+                    )}&embedded=true`,
+                  }}
+                  originWhitelist={["*"]}
+                  onLoadStart={() => setIsLoading(true)}
+                  onLoadEnd={() => setIsLoading(false)}
+                  style={{
+                    flex: 1,
+                    opacity: isLoading ? 0 : 1,
+                  }}
+                />
+              )}
+            </Modal>
+          </Portal>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -219,6 +251,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     padding: 5,
     marginTop: 10,
+    backgroundColor: "white",
   },
   cardContainerView: {
     padding: 15,

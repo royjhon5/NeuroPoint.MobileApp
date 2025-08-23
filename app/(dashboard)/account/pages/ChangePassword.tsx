@@ -99,7 +99,7 @@ const ChangePassword = () => {
         loading={isPending}
         disabled={isPending}
         onPress={handleSubmit(onSubmit)}
-        style={{ marginTop: 8 }}
+        style={{ marginTop: 8, backgroundColor: "blue" }}
       >
         Submit
       </Button>

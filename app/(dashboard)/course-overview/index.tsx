@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -24,9 +25,8 @@ export default function CourseOverView() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { id } = params;
-  const { course, curriculumCount, lessonsCount, coursedata } = useGetCourse(
-    Number(id)
-  );
+  const { course, curriculumCount, lessonsCount, coursedata, isLoading } =
+    useGetCourse(Number(id));
 
   const { onSubmit, isPending } = useCourseEnrollment();
   const handleEnroll = () => {
@@ -66,119 +66,124 @@ export default function CourseOverView() {
   }, []);
   return (
     <>
-      <ScrollView>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            padding: 16,
-            backgroundColor:
-              "linear-gradient(to right, rgb(243, 244, 246), rgb(229, 231, 235))",
-          }}
-        >
-          <Text
+      {isLoading ? (
+        <View className="flex justify-center items-center flex-1 w-full h-full bg-white">
+          <ActivityIndicator animating={true} color="blue" size="large" />
+        </View>
+      ) : (
+        <ScrollView style={{ backgroundColor: "white" }}>
+          <SafeAreaView
             style={{
-              fontWeight: "bold",
-              fontSize: 35,
-              color: "rgb(26, 54, 93)",
+              flex: 1,
+              padding: 16,
+              backgroundColor:
+                "linear-gradient(to right, rgb(243, 244, 246), rgb(229, 231, 235))",
             }}
           >
-            {course?.name}
-          </Text>
-          <View style={styles.fullContent}>
-            <HTML
-              source={{ html: course?.description || "" }}
-              contentWidth={width}
-              baseStyle={styles.htmlBase}
-            />
-          </View>
-          {coursedata?.course.isEnrolled ? (
-            <Button
-              mode="contained"
-              style={{ marginTop: 15, backgroundColor: "rgb(2, 65, 190)" }}
-              onPress={() =>
-                router.push({
-                  pathname: "/(dashboard)/start-course",
-                  params: { id: id },
-                })
-              }
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 35,
+                color: "rgb(26, 54, 93)",
+              }}
             >
-              Start Course
-            </Button>
-          ) : (
-            <Button
-              mode="contained"
-              style={{ marginTop: 15, backgroundColor: "rgb(2, 65, 190)" }}
-              onPress={handleEnroll}
-            >
-              {isPending ? "Loading..." : "Take Course"}
-            </Button>
-          )}
-        </SafeAreaView>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            padding: 16,
-            backgroundColor: "#FFFFFF",
-          }}
-        >
-          <Text
+              {course?.name}
+            </Text>
+            <View style={styles.fullContent}>
+              <HTML
+                source={{ html: course?.description || "" }}
+                contentWidth={width}
+                baseStyle={styles.htmlBase}
+              />
+            </View>
+            {coursedata?.course.isEnrolled ? (
+              <Button
+                mode="contained"
+                style={{ marginTop: 15, backgroundColor: "rgb(2, 65, 190)" }}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(dashboard)/start-course",
+                    params: { id: id },
+                  })
+                }
+              >
+                Start Course
+              </Button>
+            ) : (
+              <Button
+                mode="contained"
+                style={{ marginTop: 15, backgroundColor: "rgb(2, 65, 190)" }}
+                onPress={handleEnroll}
+              >
+                {isPending ? "Loading..." : "Take Course"}
+              </Button>
+            )}
+          </SafeAreaView>
+          <SafeAreaView
             style={{
-              fontWeight: "bold",
-              fontSize: 30,
-              color: "rgb(26, 54, 93)",
-              textAlign: "center",
-              marginTop: 15,
+              flex: 1,
+              padding: 16,
             }}
           >
-            Course Curriculum
-          </Text>
-          <View style={styles.section}>
             <Text
               style={{
-                padding: 10,
+                fontWeight: "bold",
+                fontSize: 30,
+                color: "rgb(26, 54, 93)",
                 textAlign: "center",
-                backgroundColor: "rgb(25, 118, 210)",
-                borderRadius: 5,
-                color: "white",
+                marginTop: 15,
               }}
             >
-              {curriculumCount} Topics
+              Course Curriculum
             </Text>
-            <Text
-              style={{
-                padding: 10,
-                textAlign: "center",
-                backgroundColor: "rgb(156, 39, 176)",
-                borderRadius: 5,
-                color: "white",
-              }}
-            >
-              {lessonsCount} Lessons
-            </Text>
-          </View>
-          <View>
-            <List.Section title="Topics and Lessons">
-              {allTopics?.map((topic: any, i: any) => (
-                <List.Accordion
-                  key={`topic-${i}`}
-                  title={topic.name}
-                  left={(props) => <List.Icon {...props} icon="folder" />}
-                >
-                  {topic.lessons?.map((lesson: any, j: any) => (
-                    <List.Item
-                      key={`lesson-${i}-${j}`}
-                      title={lesson.name || `Lesson ${j + 1}`}
-                      left={(props) => (
-                        <List.Icon {...props} icon="file-document-outline" />
-                      )}
-                    />
-                  ))}
-                </List.Accordion>
-              ))}
-            </List.Section>
-          </View>
-        </SafeAreaView>
-      </ScrollView>
+            <View style={styles.section}>
+              <Text
+                style={{
+                  padding: 10,
+                  textAlign: "center",
+                  backgroundColor: "rgb(25, 118, 210)",
+                  borderRadius: 5,
+                  color: "white",
+                }}
+              >
+                {curriculumCount} Topics
+              </Text>
+              <Text
+                style={{
+                  padding: 10,
+                  textAlign: "center",
+                  backgroundColor: "rgb(156, 39, 176)",
+                  borderRadius: 5,
+                  color: "white",
+                }}
+              >
+                {lessonsCount} Lessons
+              </Text>
+            </View>
+            <View>
+              <List.Section title="Topics and Lessons">
+                {allTopics?.map((topic: any, i: any) => (
+                  <List.Accordion
+                    key={`topic-${i}`}
+                    title={topic.name}
+                    left={(props) => <List.Icon {...props} icon="folder" />}
+                  >
+                    {topic.lessons?.map((lesson: any, j: any) => (
+                      <List.Item
+                        key={`lesson-${i}-${j}`}
+                        title={lesson.name || `Lesson ${j + 1}`}
+                        left={(props) => (
+                          <List.Icon {...props} icon="file-document-outline" />
+                        )}
+                      />
+                    ))}
+                  </List.Accordion>
+                ))}
+              </List.Section>
+            </View>
+          </SafeAreaView>
+        </ScrollView>
+      )}
     </>
   );
 }

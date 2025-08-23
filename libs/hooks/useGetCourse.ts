@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { GetCourse } from "../api/services/course.api";
 
 const useGetCourse = (id: number) => {
-  const { refetch, data, isPending } = useQuery({
+  const { refetch, data, isPending, isLoading } = useQuery({
     queryKey: ["getcourse", id],
     queryFn: async () => {
       const response = await GetCourse(id);
@@ -33,6 +33,7 @@ const useGetCourse = (id: number) => {
     course: data?.response?.course ?? null,
     curriculumCount: data?.response?.curriculum?.length ?? 0,
     lessonsCount: totalLessonsCount,
+    isLoading,
   };
 };
 

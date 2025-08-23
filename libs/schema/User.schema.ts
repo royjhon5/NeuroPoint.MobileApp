@@ -16,6 +16,7 @@ export const registerSchema = z.object({
   mobileNumber: z.string().optional(),
   address: z.string().optional(),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  packageTypeId: z.number().min(1, "Package Type is required"),
   // confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
 });
 export type RegisterSchemaType = z.infer<typeof registerSchema>;

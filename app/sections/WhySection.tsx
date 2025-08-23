@@ -21,29 +21,29 @@ export default function WhyComponent() {
 
       <View style={styles.containerwhy}>
         <View style={styles.featureRow}>
-          <MaterialIcons name="check-circle" size={24} color="#7b61ff" />
+          <MaterialIcons name="check-circle" size={24} color="blue" />
           <Text style={styles.featureText}>Personalized Learning Plans</Text>
         </View>
         <View style={styles.featureRow}>
-          <MaterialIcons name="check-circle" size={24} color="#7b61ff" />
+          <MaterialIcons name="check-circle" size={24} color="blue" />
           <Text style={styles.featureText}>Interactive, Visual Lessons</Text>
         </View>
         <View style={styles.featureRow}>
-          <MaterialIcons name="check-circle" size={24} color="#7b61ff" />
+          <MaterialIcons name="check-circle" size={24} color="blue" />
           <Text style={styles.featureText}>Sensory-Friendly Environment</Text>
         </View>
         <View style={styles.featureRow}>
-          <MaterialIcons name="check-circle" size={24} color="#7b61ff" />
+          <MaterialIcons name="check-circle" size={24} color="blue" />
           <Text style={styles.featureText}>Parent & Teacher Collaboration</Text>
         </View>
         <View style={styles.featureRow}>
-          <MaterialIcons name="check-circle" size={24} color="#7b61ff" />
+          <MaterialIcons name="check-circle" size={24} color="blue" />
           <Text style={styles.featureText}>
             Inclusive and Compassionate Community
           </Text>
         </View>
         <View style={styles.featureRow}>
-          <MaterialIcons name="check-circle" size={24} color="#7b61ff" />
+          <MaterialIcons name="check-circle" size={24} color="blue" />
           <Text style={styles.featureText}>
             Integrating AI for More Adaptive Learning Experience
           </Text>

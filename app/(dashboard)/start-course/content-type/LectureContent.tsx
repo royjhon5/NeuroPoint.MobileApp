@@ -86,7 +86,6 @@ const LectureContent = ({
     if (lessonType === "Lecture") getZoomMeetingSchedule(lessonId);
   }, [lessonId, lessonType]);
 
-  console.log(zoomScheduleDetails);
   return (
     <View style={{ marginTop: 5 }}>
       <View

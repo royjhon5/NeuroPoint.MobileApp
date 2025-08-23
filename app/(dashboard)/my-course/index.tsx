@@ -1,3 +1,4 @@
+import useUserDetails from "@/libs/hooks/useUserDetails";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ import useGetEnrollment from "../../../libs/hooks/useGetEnrollment";
 export default function MyCourse() {
   const router = useRouter();
   const { announcementdata } = useGetAnnouncement();
+  const { getUserDetails } = useUserDetails();
   const { width } = useWindowDimensions();
   const [expandedAnnouncements, setExpandedAnnouncements] = useState<number[]>(
     []
@@ -78,9 +80,14 @@ export default function MyCourse() {
         >
           View Available Course
         </Button>
-
-        {isLoading ? (
-          <View className="flex flex-col gap-2 items-center justify-center h-80">
+        {getUserDetails?.currentPackage.paymentStatus === 0 ? (
+          <View className="w-full flex items-center justify-center p-4 bg-yellow-100 rounded-md my-4">
+            <Text>
+              ⚠️ Payment verification pending. Please wait for admin approval.
+            </Text>
+          </View>
+        ) : isLoading ? (
+          <View className="flex flex-col gap-2 items-center justify-center h-full">
             <ActivityIndicator animating={true} color="blue" size="large" />
           </View>
         ) : (
@@ -108,6 +115,7 @@ export default function MyCourse() {
                       <Button
                         icon="card-text"
                         mode="text"
+                        labelStyle={{ color: "blue" }}
                         onPress={() =>
                           router.push({
                             pathname: "/(dashboard)/course-overview",
@@ -120,6 +128,7 @@ export default function MyCourse() {
                       <Button
                         icon="play-circle"
                         mode="text"
+                        labelStyle={{ color: "blue" }}
                         onPress={() =>
                           router.push({
                             pathname: "/(dashboard)/start-course",

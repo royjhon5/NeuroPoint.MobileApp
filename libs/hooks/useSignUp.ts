@@ -108,14 +108,21 @@ const useSignUp = () => {
   };
 
   const onSubmit = (data: RegisterSchemaType) => {
-    const { firstName, lastName, email, password, mobileNumber, address } =
-      data;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      mobileNumber,
+      address,
+      packageTypeId,
+    } = data;
     mutation.mutate({
       firstName,
       lastName,
       email,
       password,
-      packageTypeId: packageType.current,
+      packageTypeId,
       roleId: "546a8454-a822-47a6-81d0-ca93b5dc85a4",
       branchId: 1,
       mobileNumber,

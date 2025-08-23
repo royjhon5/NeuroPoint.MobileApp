@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserRoles } from "../api/services/user.api";
 
 const useUserRoles = () => {
-  const { isFetching, data } = useQuery({
+  const { isFetching, isError, error, data } = useQuery({
     queryKey: ["user-roles"],
     queryFn: async () => {
       const response = await getUserRoles();
@@ -10,9 +10,15 @@ const useUserRoles = () => {
     },
   });
 
+  if (isError) {
+    console.error("Error fetching user roles:", error.message);
+  }
+
   return {
     isFetching,
-    userRoles: data?.response || null,
+    isError,
+    error,
+    userRoles: data || null,
   };
 };
 
