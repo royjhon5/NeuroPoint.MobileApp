@@ -132,6 +132,7 @@ export default function StartCourse() {
     setSelectedLesson(null);
     setSelectedAnswers([]);
     setIsTakingQuiz(false);
+    setLoading(true);
   };
   const getData = async () => {
     try {
@@ -373,6 +374,7 @@ export default function StartCourse() {
                           zoomSchedule: selectedLesson?.zoomSchedule as string,
                         }}
                         lessonType={"Lecture"}
+                        zoomLink={selectedLesson?.description as string}
                       />
                     )}
                     {/* Video */}
@@ -423,8 +425,11 @@ export default function StartCourse() {
                               )}&embedded=true`,
                             }}
                             originWhitelist={["*"]}
+                            onLoadStart={() => setLoading(true)}
+                            onLoadEnd={() => setLoading(false)}
                             style={{
                               flex: 1,
+                              opacity: loading ? 0 : 1,
                             }}
                           />
                         </View>

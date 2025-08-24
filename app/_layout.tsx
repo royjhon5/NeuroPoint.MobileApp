@@ -90,7 +90,7 @@ export default function RootLayout() {
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <StatusBar />
+            <StatusBar style="dark" />
 
             <PaperProvider theme={paperTheme}>
               <ErrorBoundary>

@@ -13,6 +13,7 @@ interface LectureContentProps {
     zoomSchedule: string | undefined;
   };
   lessonType: string;
+  zoomLink: string;
 }
 type Users = {
   userId: string;
@@ -32,6 +33,7 @@ const LectureContent = ({
   lessonId,
   zoomDetails,
   lessonType,
+  zoomLink,
 }: LectureContentProps) => {
   const [zoomScheduleDetails, setZoomScheduleDetails] = useState<{
     topic: string;
@@ -140,6 +142,7 @@ const LectureContent = ({
                 label="Join Zoom Lecture"
                 meetingId={zoomScheduleDetails.meetingId}
                 password={zoomScheduleDetails.password}
+                zoomLink={zoomLink}
               />
             </View>
           )}
