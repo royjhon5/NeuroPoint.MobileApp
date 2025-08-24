@@ -35,6 +35,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.royjhon5.NeuropointMobileApp"
     },
+
     "plugins": [
       [
         "expo-splash-screen",
