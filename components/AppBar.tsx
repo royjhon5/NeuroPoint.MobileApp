@@ -2,10 +2,18 @@ import { useAuth } from "@/context/AuthContext";
 import { useDrawer } from "@/context/DrawerContext";
 import useUserDetails from "@/libs/hooks/useUserDetails";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { Appbar, Avatar, IconButton, Menu, useTheme } from "react-native-paper";
+import {
+  Appbar,
+  Avatar,
+  Button,
+  IconButton,
+  Menu,
+  TouchableRipple,
+  useTheme,
+} from "react-native-paper";
 
 const AppBarComponent = () => {
   const { openDrawer } = useDrawer();
@@ -14,6 +22,7 @@ const AppBarComponent = () => {
   const router = useRouter();
   const { getUserDetails } = useUserDetails();
   const theme = useTheme();
+  const pathname = usePathname();
 
   const handleAuthAction = async () => {
     if (isAuthenticated) {
@@ -35,16 +44,20 @@ const AppBarComponent = () => {
         <Appbar.Content
           title={
             <View className="flex flex-row gap-1 items-center">
-              <IconButton icon="menu" size={20} onPress={openDrawer} />
-              <View className="flex flex-row items-center">
-                <Image
-                  source={require("../assets/logo/logo.png")}
-                  style={{ width: 40, height: 40 }}
-                  resizeMode="contain"
-                />
-                <Text style={{ color: "#1F44FF", fontSize: 16 }}>NEURO</Text>
-                <Text style={{ color: "#CC3023", fontSize: 16 }}>POINT</Text>
-              </View>
+              {isAuthenticated && (
+                <IconButton icon="menu" size={20} onPress={openDrawer} />
+              )}
+              <TouchableRipple onPress={() => router.push("/")}>
+                <View className="flex flex-row items-center">
+                  <Image
+                    source={require("../assets/logo/logo.png")}
+                    style={{ width: 40, height: 40 }}
+                    resizeMode="contain"
+                  />
+                  <Text style={{ color: "#1F44FF", fontSize: 16 }}>NEURO</Text>
+                  <Text style={{ color: "#CC3023", fontSize: 16 }}>POINT</Text>
+                </View>
+              </TouchableRipple>
             </View>
           }
         />
@@ -84,12 +97,18 @@ const AppBarComponent = () => {
               </Menu>
             </>
           ) : (
-            <IconButton
-              mode="outlined"
-              icon="login"
-              size={15}
-              onPress={handleAuthAction}
-            />
+            <View>
+              {pathname.endsWith("/login") ||
+              pathname.endsWith("/register") ? null : (
+                <Button
+                  mode="contained"
+                  buttonColor="blue"
+                  onPress={handleAuthAction}
+                >
+                  Login
+                </Button>
+              )}
+            </View>
           )}
         </View>
       </Appbar.Header>

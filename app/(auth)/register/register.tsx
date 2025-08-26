@@ -2,10 +2,10 @@ import { BranchDto } from "@/types/DTO/BranchDTO";
 import { router } from "expo-router";
 import React, { useState } from "react";
 
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet, Text } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Button, Card, TextInput } from "react-native-paper";
+import { Button, Card, TextInput, useTheme } from "react-native-paper";
 interface SignUpFormProps {
   isPartner: boolean;
   branchOptions: BranchDto[];
@@ -25,6 +25,7 @@ const SignUpForm = ({ isPartner, branchOptions }: SignUpFormProps) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [branchId, setBranchId] = useState<number | null>(null);
+  const theme = useTheme();
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
@@ -167,11 +168,15 @@ const SignUpForm = ({ isPartner, branchOptions }: SignUpFormProps) => {
             </Button>
 
             {/* Link to sign in */}
-            <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-              <Text style={styles.signinLink}>
-                Already have an account? Sign in
+            <Text style={styles.note}>
+              Already have an account?{" "}
+              <Text
+                style={{ color: theme.colors.primary }}
+                onPress={() => router.push("/(auth)/login")}
+              >
+                Sign In
               </Text>
-            </TouchableOpacity>
+            </Text>
           </Card.Content>
         </Card>
       </KeyboardAwareScrollView>
@@ -186,6 +191,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: "#FFFFFF",
+  },
+  note: {
+    textAlign: "center",
+    marginTop: 16,
+    fontSize: 14,
   },
   card: {
     width: "100%",
