@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
@@ -17,6 +18,7 @@ export default function Login() {
   const [hidePassword, setHidePassword] = useState(true);
   const theme = useTheme();
   const { form, onSubmit, loading } = useSignIn();
+  const { isAuthenticated } = useAuth();
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f4f4" }}>
@@ -30,6 +32,11 @@ export default function Login() {
               source={require("../../assets/logo/logo.png")}
               style={styles.image}
             />
+            {!isAuthenticated && (
+              <View className="w-full flex items-center justify-center p-4 bg-yellow-100 rounded-md my-4">
+                <Text>⚠️ Unauthenticated please login.</Text>
+              </View>
+            )}
             <Text variant="headlineMedium" style={styles.title}>
               Welcome back
             </Text>
@@ -109,12 +116,12 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    marginBottom: 1,
+    marginBottom: 0,
     textAlign: "center",
     fontWeight: "bold",
   },
   description: {
-    marginBottom: 24,
+    marginBottom: 10,
     textAlign: "center",
     fontSize: 18,
   },
